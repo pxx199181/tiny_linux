@@ -1,0 +1,11 @@
+#!/bin/sh
+export PATH=/sbin:/bin:
+
+export HOSTNAME=ac
+mount -a # Mount the default file systems mentioned in /etc/fstab.
+mount proc /proc
+mount sysfs /sys
+ifconfig eth0 up
+ifconfig eth0 10.0.2.15
+ip route add default via 10.0.2.2
+echo "start....."
