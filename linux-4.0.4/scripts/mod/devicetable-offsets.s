@@ -5,30 +5,30 @@
 # options passed:  -nostdinc -I ./arch/x86/include
 # -I arch/x86/include/generated/uapi -I arch/x86/include/generated
 # -I include -I ./arch/x86/include/uapi -I arch/x86/include/generated/uapi
-# -I ./include/uapi -I include/generated/uapi -imultiarch x86_64-linux-gnu
-# -D __KERNEL__ -D CONFIG_AS_CFI=1 -D CONFIG_AS_CFI_SIGNAL_FRAME=1
-# -D CONFIG_AS_CFI_SECTIONS=1 -D CONFIG_AS_FXSAVEQ=1 -D CONFIG_AS_SSSE3=1
-# -D CONFIG_AS_CRC32=1 -D CONFIG_AS_AVX=1 -D CONFIG_AS_AVX2=1
-# -D CC_HAVE_ASM_GOTO -D KBUILD_STR(s)=#s
+# -I ./include/uapi -I include/generated/uapi -imultilib 32
+# -imultiarch i386-linux-gnu -D __KERNEL__ -D CONFIG_AS_CFI=1
+# -D CONFIG_AS_CFI_SIGNAL_FRAME=1 -D CONFIG_AS_CFI_SECTIONS=1
+# -D CONFIG_AS_SSSE3=1 -D CONFIG_AS_CRC32=1 -D CONFIG_AS_AVX=1
+# -D CONFIG_AS_AVX2=1 -D CC_HAVE_ASM_GOTO -D KBUILD_STR(s)=#s
 # -D KBUILD_BASENAME=KBUILD_STR(devicetable_offsets)
 # -D KBUILD_MODNAME=KBUILD_STR(devicetable_offsets)
 # -isystem /usr/lib/gcc/x86_64-linux-gnu/4.9/include
 # -include ./include/linux/kconfig.h
 # -MD scripts/mod/.devicetable-offsets.s.d
-# scripts/mod/devicetable-offsets.c -m64 -mno-80387 -mno-fp-ret-in-387
-# -mtune=generic -mno-red-zone -mcmodel=kernel -maccumulate-outgoing-args
-# -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -march=x86-64
-# -auxbase-strip scripts/mod/devicetable-offsets.s -Os -Wall -Wundef
-# -Wstrict-prototypes -Wno-trigraphs -Werror=implicit-function-declaration
-# -Wno-format-security -Wno-sign-compare -Wno-maybe-uninitialized
-# -Wframe-larger-than=2048 -Wno-unused-but-set-variable
-# -Wdeclaration-after-statement -Wno-pointer-sign -Werror=implicit-int
-# -Werror=strict-prototypes -Werror=date-time -std=gnu90
-# -fno-strict-aliasing -fno-common -funit-at-a-time
+# scripts/mod/devicetable-offsets.c -m32 -msoft-float -mregparm=3
+# -mpreferred-stack-boundary=2 -march=i686 -mno-sse -mno-mmx -mno-sse2
+# -mno-3dnow -mno-avx -auxbase-strip scripts/mod/devicetable-offsets.s -Os
+# -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs
+# -Werror=implicit-function-declaration -Wno-format-security
+# -Wno-sign-compare -Wno-maybe-uninitialized -Wframe-larger-than=1024
+# -Wno-unused-but-set-variable -Wdeclaration-after-statement
+# -Wno-pointer-sign -Werror=implicit-int -Werror=strict-prototypes
+# -Werror=date-time -std=gnu90 -fno-strict-aliasing -fno-common
+# -freg-struct-return -fno-pic -ffreestanding
 # -fno-asynchronous-unwind-tables -fno-delete-null-pointer-checks
-# -fno-stack-protector -fno-omit-frame-pointer -fno-optimize-sibling-calls
-# -fno-var-tracking-assignments -fno-strict-overflow -fconserve-stack
-# -fverbose-asm --param allow-store-data-races=0
+# -fno-stack-protector -fomit-frame-pointer -fno-var-tracking-assignments
+# -fno-strict-overflow -fconserve-stack -fverbose-asm
+# --param allow-store-data-races=0
 # options enabled:  -faggressive-loop-optimizations -fauto-inc-dec
 # -fbranch-count-reg -fcaller-saves -fcombine-stack-adjustments
 # -fcompare-elim -fcprop-registers -fcrossjumping -fcse-follow-jumps
@@ -42,27 +42,28 @@
 # -fipa-reference -fipa-sra -fira-hoist-pressure -fira-share-save-slots
 # -fira-share-spill-slots -fisolate-erroneous-paths-dereference -fivopts
 # -fkeep-static-consts -fleading-underscore -fmath-errno -fmerge-constants
-# -fmerge-debug-strings -fmove-loop-invariants -fpartial-inlining
-# -fpeephole -fpeephole2 -fprefetch-loop-arrays -free -freg-struct-return
-# -freorder-blocks -freorder-blocks-and-partition -freorder-functions
-# -frerun-cse-after-loop -fsched-critical-path-heuristic
-# -fsched-dep-count-heuristic -fsched-group-heuristic -fsched-interblock
-# -fsched-last-insn-heuristic -fsched-rank-heuristic -fsched-spec
-# -fsched-spec-insn-heuristic -fsched-stalled-insns-dep -fschedule-insns2
-# -fshow-column -fshrink-wrap -fsigned-zeros -fsplit-ivs-in-unroller
-# -fsplit-wide-types -fstrict-volatile-bitfields -fsync-libcalls
-# -fthread-jumps -ftoplevel-reorder -ftrapping-math -ftree-bit-ccp
-# -ftree-builtin-call-dce -ftree-ccp -ftree-ch -ftree-coalesce-vars
-# -ftree-copy-prop -ftree-copyrename -ftree-cselim -ftree-dce
-# -ftree-dominator-opts -ftree-dse -ftree-forwprop -ftree-fre
-# -ftree-loop-if-convert -ftree-loop-im -ftree-loop-ivcanon
-# -ftree-loop-optimize -ftree-parallelize-loops= -ftree-phiprop -ftree-pre
-# -ftree-pta -ftree-reassoc -ftree-scev-cprop -ftree-sink -ftree-slsr
-# -ftree-sra -ftree-switch-conversion -ftree-tail-merge -ftree-ter
-# -ftree-vrp -funit-at-a-time -fverbose-asm -fzero-initialized-in-bss
-# -m128bit-long-double -m64 -maccumulate-outgoing-args -malign-stringops
-# -mfxsr -mglibc -mieee-fp -mlong-double-80 -mno-fancy-math-387
-# -mno-red-zone -mno-sse4 -mpush-args -mtls-direct-seg-refs
+# -fmerge-debug-strings -fmove-loop-invariants -fomit-frame-pointer
+# -foptimize-sibling-calls -fpartial-inlining -fpeephole -fpeephole2
+# -fprefetch-loop-arrays -free -freg-struct-return -freorder-blocks
+# -freorder-blocks-and-partition -freorder-functions -frerun-cse-after-loop
+# -fsched-critical-path-heuristic -fsched-dep-count-heuristic
+# -fsched-group-heuristic -fsched-interblock -fsched-last-insn-heuristic
+# -fsched-rank-heuristic -fsched-spec -fsched-spec-insn-heuristic
+# -fsched-stalled-insns-dep -fschedule-insns2 -fshow-column -fshrink-wrap
+# -fsigned-zeros -fsplit-ivs-in-unroller -fsplit-wide-types
+# -fstrict-volatile-bitfields -fsync-libcalls -fthread-jumps
+# -ftoplevel-reorder -ftrapping-math -ftree-bit-ccp -ftree-builtin-call-dce
+# -ftree-ccp -ftree-ch -ftree-coalesce-vars -ftree-copy-prop
+# -ftree-copyrename -ftree-cselim -ftree-dce -ftree-dominator-opts
+# -ftree-dse -ftree-forwprop -ftree-fre -ftree-loop-if-convert
+# -ftree-loop-im -ftree-loop-ivcanon -ftree-loop-optimize
+# -ftree-parallelize-loops= -ftree-phiprop -ftree-pre -ftree-pta
+# -ftree-reassoc -ftree-scev-cprop -ftree-sink -ftree-slsr -ftree-sra
+# -ftree-switch-conversion -ftree-tail-merge -ftree-ter -ftree-vrp
+# -funit-at-a-time -fverbose-asm -fzero-initialized-in-bss -m32
+# -m96bit-long-double -malign-stringops -mglibc -mieee-fp -mlong-double-80
+# -mno-fancy-math-387 -mno-red-zone -mno-sse4 -mpush-args -msahf
+# -mtls-direct-seg-refs
 
 	.section	.text.unlikely,"ax",@progbits
 .LCOLDB0:
@@ -71,12 +72,10 @@
 	.globl	main
 	.type	main, @function
 main:
-	pushq	%rbp	#
-	movq	%rsp, %rbp	#,
 #APP
 # 10 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_usb_device_id $32 sizeof(struct usb_device_id)	#
+->SIZE_usb_device_id $24 sizeof(struct usb_device_id)	#
 # 0 "" 2
 # 11 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -128,7 +127,7 @@ main:
 # 0 "" 2
 # 24 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_hid_device_id $24 sizeof(struct hid_device_id)	#
+->SIZE_hid_device_id $16 sizeof(struct hid_device_id)	#
 # 0 "" 2
 # 25 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -148,7 +147,7 @@ main:
 # 0 "" 2
 # 30 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_ieee1394_device_id $32 sizeof(struct ieee1394_device_id)	#
+->SIZE_ieee1394_device_id $24 sizeof(struct ieee1394_device_id)	#
 # 0 "" 2
 # 31 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -172,7 +171,7 @@ main:
 # 0 "" 2
 # 37 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_pci_device_id $32 sizeof(struct pci_device_id)	#
+->SIZE_pci_device_id $28 sizeof(struct pci_device_id)	#
 # 0 "" 2
 # 38 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -200,7 +199,7 @@ main:
 # 0 "" 2
 # 45 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_ccw_device_id $16 sizeof(struct ccw_device_id)	#
+->SIZE_ccw_device_id $12 sizeof(struct ccw_device_id)	#
 # 0 "" 2
 # 46 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -224,7 +223,7 @@ main:
 # 0 "" 2
 # 52 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_ap_device_id $16 sizeof(struct ap_device_id)	#
+->SIZE_ap_device_id $8 sizeof(struct ap_device_id)	#
 # 0 "" 2
 # 53 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -232,7 +231,7 @@ main:
 # 0 "" 2
 # 55 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_css_device_id $16 sizeof(struct css_device_id)	#
+->SIZE_css_device_id $8 sizeof(struct css_device_id)	#
 # 0 "" 2
 # 56 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -260,7 +259,7 @@ main:
 # 0 "" 2
 # 64 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_acpi_device_id $24 sizeof(struct acpi_device_id)	#
+->SIZE_acpi_device_id $16 sizeof(struct acpi_device_id)	#
 # 0 "" 2
 # 65 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -268,7 +267,7 @@ main:
 # 0 "" 2
 # 67 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_pnp_device_id $16 sizeof(struct pnp_device_id)	#
+->SIZE_pnp_device_id $12 sizeof(struct pnp_device_id)	#
 # 0 "" 2
 # 68 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -276,15 +275,15 @@ main:
 # 0 "" 2
 # 70 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_pnp_card_device_id $80 sizeof(struct pnp_card_device_id)	#
+->SIZE_pnp_card_device_id $76 sizeof(struct pnp_card_device_id)	#
 # 0 "" 2
 # 71 "scripts/mod/devicetable-offsets.c" 1
 	
-->OFF_pnp_card_device_id_devs $16 offsetof(struct pnp_card_device_id, devs)	#
+->OFF_pnp_card_device_id_devs $12 offsetof(struct pnp_card_device_id, devs)	#
 # 0 "" 2
 # 73 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_pcmcia_device_id $80 sizeof(struct pcmcia_device_id)	#
+->SIZE_pcmcia_device_id $52 sizeof(struct pcmcia_device_id)	#
 # 0 "" 2
 # 74 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -316,7 +315,7 @@ main:
 # 0 "" 2
 # 82 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_of_device_id $200 sizeof(struct of_device_id)	#
+->SIZE_of_device_id $196 sizeof(struct of_device_id)	#
 # 0 "" 2
 # 83 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -344,7 +343,7 @@ main:
 # 0 "" 2
 # 91 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_input_device_id $192 sizeof(struct input_device_id)	#
+->SIZE_input_device_id $160 sizeof(struct input_device_id)	#
 # 0 "" 2
 # 92 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -352,59 +351,59 @@ main:
 # 0 "" 2
 # 93 "scripts/mod/devicetable-offsets.c" 1
 	
-->OFF_input_device_id_bustype $8 offsetof(struct input_device_id, bustype)	#
+->OFF_input_device_id_bustype $4 offsetof(struct input_device_id, bustype)	#
 # 0 "" 2
 # 94 "scripts/mod/devicetable-offsets.c" 1
 	
-->OFF_input_device_id_vendor $10 offsetof(struct input_device_id, vendor)	#
+->OFF_input_device_id_vendor $6 offsetof(struct input_device_id, vendor)	#
 # 0 "" 2
 # 95 "scripts/mod/devicetable-offsets.c" 1
 	
-->OFF_input_device_id_product $12 offsetof(struct input_device_id, product)	#
+->OFF_input_device_id_product $8 offsetof(struct input_device_id, product)	#
 # 0 "" 2
 # 96 "scripts/mod/devicetable-offsets.c" 1
 	
-->OFF_input_device_id_version $14 offsetof(struct input_device_id, version)	#
+->OFF_input_device_id_version $10 offsetof(struct input_device_id, version)	#
 # 0 "" 2
 # 97 "scripts/mod/devicetable-offsets.c" 1
 	
-->OFF_input_device_id_evbit $16 offsetof(struct input_device_id, evbit)	#
+->OFF_input_device_id_evbit $12 offsetof(struct input_device_id, evbit)	#
 # 0 "" 2
 # 98 "scripts/mod/devicetable-offsets.c" 1
 	
-->OFF_input_device_id_keybit $24 offsetof(struct input_device_id, keybit)	#
+->OFF_input_device_id_keybit $16 offsetof(struct input_device_id, keybit)	#
 # 0 "" 2
 # 99 "scripts/mod/devicetable-offsets.c" 1
 	
-->OFF_input_device_id_relbit $120 offsetof(struct input_device_id, relbit)	#
+->OFF_input_device_id_relbit $112 offsetof(struct input_device_id, relbit)	#
 # 0 "" 2
 # 100 "scripts/mod/devicetable-offsets.c" 1
 	
-->OFF_input_device_id_absbit $128 offsetof(struct input_device_id, absbit)	#
+->OFF_input_device_id_absbit $116 offsetof(struct input_device_id, absbit)	#
 # 0 "" 2
 # 101 "scripts/mod/devicetable-offsets.c" 1
 	
-->OFF_input_device_id_mscbit $136 offsetof(struct input_device_id, mscbit)	#
+->OFF_input_device_id_mscbit $124 offsetof(struct input_device_id, mscbit)	#
 # 0 "" 2
 # 102 "scripts/mod/devicetable-offsets.c" 1
 	
-->OFF_input_device_id_ledbit $144 offsetof(struct input_device_id, ledbit)	#
+->OFF_input_device_id_ledbit $128 offsetof(struct input_device_id, ledbit)	#
 # 0 "" 2
 # 103 "scripts/mod/devicetable-offsets.c" 1
 	
-->OFF_input_device_id_sndbit $152 offsetof(struct input_device_id, sndbit)	#
+->OFF_input_device_id_sndbit $132 offsetof(struct input_device_id, sndbit)	#
 # 0 "" 2
 # 104 "scripts/mod/devicetable-offsets.c" 1
 	
-->OFF_input_device_id_ffbit $160 offsetof(struct input_device_id, ffbit)	#
+->OFF_input_device_id_ffbit $136 offsetof(struct input_device_id, ffbit)	#
 # 0 "" 2
 # 105 "scripts/mod/devicetable-offsets.c" 1
 	
-->OFF_input_device_id_swbit $176 offsetof(struct input_device_id, swbit)	#
+->OFF_input_device_id_swbit $152 offsetof(struct input_device_id, swbit)	#
 # 0 "" 2
 # 107 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_eisa_device_id $16 sizeof(struct eisa_device_id)	#
+->SIZE_eisa_device_id $12 sizeof(struct eisa_device_id)	#
 # 0 "" 2
 # 108 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -432,7 +431,7 @@ main:
 # 0 "" 2
 # 116 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_sdio_device_id $16 sizeof(struct sdio_device_id)	#
+->SIZE_sdio_device_id $12 sizeof(struct sdio_device_id)	#
 # 0 "" 2
 # 117 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -496,7 +495,7 @@ main:
 # 0 "" 2
 # 136 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_hv_vmbus_device_id $24 sizeof(struct hv_vmbus_device_id)	#
+->SIZE_hv_vmbus_device_id $20 sizeof(struct hv_vmbus_device_id)	#
 # 0 "" 2
 # 137 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -504,7 +503,7 @@ main:
 # 0 "" 2
 # 139 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_i2c_device_id $32 sizeof(struct i2c_device_id)	#
+->SIZE_i2c_device_id $24 sizeof(struct i2c_device_id)	#
 # 0 "" 2
 # 140 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -512,7 +511,7 @@ main:
 # 0 "" 2
 # 142 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_spi_device_id $40 sizeof(struct spi_device_id)	#
+->SIZE_spi_device_id $36 sizeof(struct spi_device_id)	#
 # 0 "" 2
 # 143 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -520,15 +519,15 @@ main:
 # 0 "" 2
 # 145 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_dmi_system_id $344 sizeof(struct dmi_system_id)	#
+->SIZE_dmi_system_id $332 sizeof(struct dmi_system_id)	#
 # 0 "" 2
 # 146 "scripts/mod/devicetable-offsets.c" 1
 	
-->OFF_dmi_system_id_matches $16 offsetof(struct dmi_system_id, matches)	#
+->OFF_dmi_system_id_matches $8 offsetof(struct dmi_system_id, matches)	#
 # 0 "" 2
 # 148 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_platform_device_id $32 sizeof(struct platform_device_id)	#
+->SIZE_platform_device_id $24 sizeof(struct platform_device_id)	#
 # 0 "" 2
 # 149 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -548,7 +547,7 @@ main:
 # 0 "" 2
 # 155 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_zorro_device_id $16 sizeof(struct zorro_device_id)	#
+->SIZE_zorro_device_id $8 sizeof(struct zorro_device_id)	#
 # 0 "" 2
 # 156 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -556,7 +555,7 @@ main:
 # 0 "" 2
 # 158 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_isapnp_device_id $16 sizeof(struct isapnp_device_id)	#
+->SIZE_isapnp_device_id $12 sizeof(struct isapnp_device_id)	#
 # 0 "" 2
 # 159 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -584,7 +583,7 @@ main:
 # 0 "" 2
 # 167 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_amba_id $16 sizeof(struct amba_id)	#
+->SIZE_amba_id $12 sizeof(struct amba_id)	#
 # 0 "" 2
 # 168 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -596,7 +595,7 @@ main:
 # 0 "" 2
 # 171 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_x86_cpu_id $16 sizeof(struct x86_cpu_id)	#
+->SIZE_x86_cpu_id $12 sizeof(struct x86_cpu_id)	#
 # 0 "" 2
 # 172 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -624,7 +623,7 @@ main:
 # 0 "" 2
 # 180 "scripts/mod/devicetable-offsets.c" 1
 	
-->SIZE_mei_cl_device_id $40 sizeof(struct mei_cl_device_id)	#
+->SIZE_mei_cl_device_id $36 sizeof(struct mei_cl_device_id)	#
 # 0 "" 2
 # 181 "scripts/mod/devicetable-offsets.c" 1
 	
@@ -652,7 +651,6 @@ main:
 # 0 "" 2
 #NO_APP
 	xorl	%eax, %eax	#
-	popq	%rbp	#
 	ret
 	.size	main, .-main
 	.section	.text.unlikely

@@ -1,4 +1,4 @@
-cmd_arch/x86/kernel/vmlinux.lds := gcc -E -Wp,-MD,arch/x86/kernel/.vmlinux.lds.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.9/include -I./arch/x86/include -Iarch/x86/include/generated/uapi -Iarch/x86/include/generated  -Iinclude -I./arch/x86/include/uapi -Iarch/x86/include/generated/uapi -I./include/uapi -Iinclude/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__    -Ux86_64 -P -C -Ux86 -D__ASSEMBLY__ -DLINKER_SCRIPT -o arch/x86/kernel/vmlinux.lds arch/x86/kernel/vmlinux.lds.S
+cmd_arch/x86/kernel/vmlinux.lds := gcc -E -Wp,-MD,arch/x86/kernel/.vmlinux.lds.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.9/include -I./arch/x86/include -Iarch/x86/include/generated/uapi -Iarch/x86/include/generated  -Iinclude -I./arch/x86/include/uapi -Iarch/x86/include/generated/uapi -I./include/uapi -Iinclude/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__    -Ui386 -P -C -Ux86 -D__ASSEMBLY__ -DLINKER_SCRIPT -o arch/x86/kernel/vmlinux.lds arch/x86/kernel/vmlinux.lds.S
 
 source_arch/x86/kernel/vmlinux.lds := arch/x86/kernel/vmlinux.lds.S
 
@@ -63,14 +63,16 @@ deps_arch/x86/kernel/vmlinux.lds := \
   arch/x86/include/asm/page_types.h \
     $(wildcard include/config/physical/align.h) \
   include/uapi/linux/const.h \
-  arch/x86/include/asm/page_64_types.h \
-    $(wildcard include/config/kasan.h) \
-    $(wildcard include/config/randomize/base.h) \
-    $(wildcard include/config/randomize/base/max/offset.h) \
-  arch/x86/include/asm/page_64.h \
+  arch/x86/include/asm/page_32_types.h \
+    $(wildcard include/config/highmem4g.h) \
+    $(wildcard include/config/highmem64g.h) \
+    $(wildcard include/config/page/offset.h) \
+    $(wildcard include/config/x86/pae.h) \
+  arch/x86/include/asm/page_32.h \
     $(wildcard include/config/debug/virtual.h) \
     $(wildcard include/config/flatmem.h) \
-    $(wildcard include/config/x86/vsyscall/emulation.h) \
+    $(wildcard include/config/x86/use/3dnow.h) \
+    $(wildcard include/config/x86/3dnow.h) \
   include/asm-generic/memory_model.h \
     $(wildcard include/config/discontigmem.h) \
     $(wildcard include/config/sparsemem/vmemmap.h) \
@@ -92,13 +94,12 @@ deps_arch/x86/kernel/vmlinux.lds := \
   arch/x86/include/asm/pgtable_types.h \
     $(wildcard include/config/kmemcheck.h) \
     $(wildcard include/config/mem/soft/dirty.h) \
-    $(wildcard include/config/x86/pae.h) \
     $(wildcard include/config/proc/fs.h) \
-  arch/x86/include/asm/pgtable_64_types.h \
-  arch/x86/include/asm/sparsemem.h \
+  arch/x86/include/asm/pgtable_32_types.h \
+    $(wildcard include/config/highmem.h) \
+  arch/x86/include/asm/pgtable-2level_types.h \
   arch/x86/include/uapi/asm/boot.h \
   arch/x86/include/asm/vvar.h \
-  arch/x86/include/asm/kexec.h \
 
 arch/x86/kernel/vmlinux.lds: $(deps_arch/x86/kernel/vmlinux.lds)
 

@@ -802,7 +802,6 @@ deps_arch/x86/kernel/vsyscall_64.o := \
   arch/x86/kernel/vsyscall_trace.h \
   include/trace/define_trace.h \
   include/trace/../../arch/x86/kernel/vsyscall_trace.h \
-  include/trace/ftrace.h \
 
 arch/x86/kernel/vsyscall_64.o: $(deps_arch/x86/kernel/vsyscall_64.o)
 

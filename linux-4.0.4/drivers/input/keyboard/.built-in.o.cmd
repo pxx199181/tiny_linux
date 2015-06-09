@@ -1,1 +1,1 @@
-cmd_drivers/input/keyboard/built-in.o :=  ld -m elf_x86_64   -r -o drivers/input/keyboard/built-in.o drivers/input/keyboard/atkbd.o 
+cmd_drivers/input/keyboard/built-in.o :=  rm -f drivers/input/keyboard/built-in.o; ar rcsD drivers/input/keyboard/built-in.o

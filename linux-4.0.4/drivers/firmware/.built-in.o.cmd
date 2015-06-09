@@ -1,1 +1,1 @@
-cmd_drivers/firmware/built-in.o :=  ld -m elf_x86_64   -r -o drivers/firmware/built-in.o drivers/firmware/dmi_scan.o drivers/firmware/dmi-id.o drivers/firmware/memmap.o 
+cmd_drivers/firmware/built-in.o :=  rm -f drivers/firmware/built-in.o; ar rcsD drivers/firmware/built-in.o

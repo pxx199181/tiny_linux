@@ -1,4 +1,4 @@
-cmd_arch/x86/boot/compressed/cmdline.o := gcc -Wp,-MD,arch/x86/boot/compressed/.cmdline.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.9/include -I./arch/x86/include -Iarch/x86/include/generated/uapi -Iarch/x86/include/generated  -Iinclude -I./arch/x86/include/uapi -Iarch/x86/include/generated/uapi -I./include/uapi -Iinclude/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -m64 -D__KERNEL__ -O2 -fno-strict-aliasing -fPIC -DDISABLE_BRANCH_PROFILING -mcmodel=small -mno-mmx -mno-sse -ffreestanding -fno-stack-protector    -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(cmdline)"  -D"KBUILD_MODNAME=KBUILD_STR(cmdline)" -c -o arch/x86/boot/compressed/cmdline.o arch/x86/boot/compressed/cmdline.c
+cmd_arch/x86/boot/compressed/cmdline.o := gcc -Wp,-MD,arch/x86/boot/compressed/.cmdline.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.9/include -I./arch/x86/include -Iarch/x86/include/generated/uapi -Iarch/x86/include/generated  -Iinclude -I./arch/x86/include/uapi -Iarch/x86/include/generated/uapi -I./include/uapi -Iinclude/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -m32 -D__KERNEL__ -O2 -fno-strict-aliasing -fPIC -DDISABLE_BRANCH_PROFILING -march=i386 -mno-mmx -mno-sse -ffreestanding -fno-stack-protector    -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(cmdline)"  -D"KBUILD_MODNAME=KBUILD_STR(cmdline)" -c -o arch/x86/boot/compressed/cmdline.o arch/x86/boot/compressed/cmdline.c
 
 source_arch/x86/boot/compressed/cmdline.o := arch/x86/boot/compressed/cmdline.c
 
@@ -37,7 +37,7 @@ deps_arch/x86/boot/compressed/cmdline.o := \
   include/linux/stddef.h \
   include/uapi/linux/stddef.h \
   arch/x86/include/asm/posix_types.h \
-  arch/x86/include/uapi/asm/posix_types_64.h \
+  arch/x86/include/uapi/asm/posix_types_32.h \
   include/uapi/asm-generic/posix_types.h \
   include/linux/stringify.h \
   include/linux/export.h \
@@ -90,15 +90,14 @@ deps_arch/x86/boot/compressed/cmdline.o := \
     $(wildcard include/config/cc/stackprotector.h) \
     $(wildcard include/config/x86/32/lazy/gs.h) \
   include/uapi/linux/const.h \
-  arch/x86/include/asm/cache.h \
-    $(wildcard include/config/x86/l1/cache/shift.h) \
-    $(wildcard include/config/x86/internode/cache/shift.h) \
-    $(wildcard include/config/x86/vsmp.h) \
   arch/x86/include/asm/page_types.h \
     $(wildcard include/config/physical/start.h) \
     $(wildcard include/config/physical/align.h) \
-  arch/x86/include/asm/page_64_types.h \
-    $(wildcard include/config/randomize/base/max/offset.h) \
+  arch/x86/include/asm/page_32_types.h \
+    $(wildcard include/config/highmem4g.h) \
+    $(wildcard include/config/highmem64g.h) \
+    $(wildcard include/config/page/offset.h) \
+    $(wildcard include/config/x86/pae.h) \
   arch/x86/include/uapi/asm/ptrace.h \
   arch/x86/include/uapi/asm/ptrace-abi.h \
   arch/x86/include/asm/processor-flags.h \
@@ -111,7 +110,6 @@ deps_arch/x86/boot/compressed/cmdline.o := \
   arch/x86/include/asm/required-features.h \
     $(wildcard include/config/x86/minimum/cpu/family.h) \
     $(wildcard include/config/math/emulation.h) \
-    $(wildcard include/config/x86/pae.h) \
     $(wildcard include/config/x86/cmpxchg64.h) \
     $(wildcard include/config/x86/use/3dnow.h) \
     $(wildcard include/config/x86/p6/nop.h) \
@@ -123,6 +121,7 @@ deps_arch/x86/boot/compressed/cmdline.o := \
     $(wildcard include/config/x86/ppro/fence.h) \
   arch/x86/include/asm/nops.h \
     $(wildcard include/config/mk7.h) \
+  include/asm-generic/bitops/fls64.h \
   include/asm-generic/bitops/find.h \
     $(wildcard include/config/generic/find/first/bit.h) \
   include/asm-generic/bitops/sched.h \
@@ -153,12 +152,16 @@ deps_arch/x86/boot/compressed/cmdline.o := \
     $(wildcard include/config/arch/has/cache/line/size.h) \
   include/uapi/linux/kernel.h \
   include/uapi/linux/sysinfo.h \
+  arch/x86/include/asm/cache.h \
+    $(wildcard include/config/x86/l1/cache/shift.h) \
+    $(wildcard include/config/x86/internode/cache/shift.h) \
+    $(wildcard include/config/x86/vsmp.h) \
   include/linux/dynamic_debug.h \
   include/linux/string.h \
     $(wildcard include/config/binary/printf.h) \
   include/uapi/linux/string.h \
   arch/x86/include/asm/string.h \
-  arch/x86/include/asm/string_64.h \
+  arch/x86/include/asm/string_32.h \
     $(wildcard include/config/kmemcheck.h) \
   include/linux/errno.h \
   include/uapi/linux/errno.h \
@@ -167,10 +170,10 @@ deps_arch/x86/boot/compressed/cmdline.o := \
   include/uapi/asm-generic/errno-base.h \
   arch/x86/include/asm/thread_info.h \
   arch/x86/include/asm/page.h \
-  arch/x86/include/asm/page_64.h \
+  arch/x86/include/asm/page_32.h \
     $(wildcard include/config/debug/virtual.h) \
     $(wildcard include/config/flatmem.h) \
-    $(wildcard include/config/x86/vsyscall/emulation.h) \
+    $(wildcard include/config/x86/3dnow.h) \
   include/linux/range.h \
   include/asm-generic/memory_model.h \
     $(wildcard include/config/discontigmem.h) \
@@ -199,8 +202,11 @@ deps_arch/x86/boot/compressed/cmdline.o := \
   arch/x86/include/asm/pgtable_types.h \
     $(wildcard include/config/mem/soft/dirty.h) \
     $(wildcard include/config/proc/fs.h) \
-  arch/x86/include/asm/pgtable_64_types.h \
-  arch/x86/include/asm/sparsemem.h \
+  arch/x86/include/asm/pgtable_32_types.h \
+    $(wildcard include/config/highmem.h) \
+  arch/x86/include/asm/pgtable-2level_types.h \
+  include/asm-generic/pgtable-nopud.h \
+  include/asm-generic/pgtable-nopmd.h \
   arch/x86/include/asm/msr.h \
   arch/x86/include/uapi/asm/msr.h \
   arch/x86/include/uapi/asm/msr-index.h \
@@ -222,7 +228,6 @@ deps_arch/x86/boot/compressed/cmdline.o := \
   include/linux/math64.h \
     $(wildcard include/config/arch/supports/int128.h) \
   arch/x86/include/asm/div64.h \
-  include/asm-generic/div64.h \
   include/linux/err.h \
   include/linux/irqflags.h \
     $(wildcard include/config/trace/irqflags.h) \
@@ -236,11 +241,11 @@ deps_arch/x86/boot/compressed/cmdline.o := \
     $(wildcard include/config/generic/atomic64.h) \
   arch/x86/include/asm/atomic.h \
   arch/x86/include/asm/cmpxchg.h \
-  arch/x86/include/asm/cmpxchg_64.h \
-  arch/x86/include/asm/atomic64_64.h \
+  arch/x86/include/asm/cmpxchg_32.h \
+  arch/x86/include/asm/atomic64_32.h \
   include/asm-generic/atomic-long.h \
   arch/x86/include/asm/user.h \
-  arch/x86/include/asm/user_64.h \
+  arch/x86/include/asm/user_32.h \
   arch/x86/include/uapi/asm/auxvec.h \
   arch/x86/include/asm/vdso.h \
     $(wildcard include/config/x86/x32.h) \
@@ -302,6 +307,7 @@ deps_arch/x86/boot/compressed/cmdline.o := \
     $(wildcard include/config/debug/mutexes.h) \
     $(wildcard include/config/mutex/spin/on/owner.h) \
   include/linux/osq_lock.h \
+  arch/x86/include/asm/desc.h \
   include/uapi/linux/elf.h \
   include/uapi/linux/elf-em.h \
   include/linux/io.h \
@@ -341,8 +347,6 @@ deps_arch/x86/boot/compressed/cmdline.o := \
   include/uapi/video/edid.h \
   arch/x86/include/asm/bootparam_utils.h \
   arch/x86/boot/compressed/../ctype.h \
-  arch/x86/boot/compressed/../cmdline.c \
-  arch/x86/boot/compressed/../boot.h \
 
 arch/x86/boot/compressed/cmdline.o: $(deps_arch/x86/boot/compressed/cmdline.o)
 

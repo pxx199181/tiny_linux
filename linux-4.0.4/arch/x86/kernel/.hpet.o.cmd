@@ -641,10 +641,6 @@ deps_arch/x86/kernel/hpet.o := \
   include/linux/uprobes.h \
     $(wildcard include/config/uprobes.h) \
   include/asm-generic/pgtable.h \
-  arch/x86/include/asm/rtc.h \
-  include/asm-generic/rtc.h \
-    $(wildcard include/config/mach/decstation.h) \
-  include/linux/bcd.h \
 
 arch/x86/kernel/hpet.o: $(deps_arch/x86/kernel/hpet.o)
 

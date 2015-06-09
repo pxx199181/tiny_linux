@@ -29,10 +29,6 @@ deps_arch/x86/realmode/rm/reboot.o := \
     $(wildcard include/config/tracing.h) \
     $(wildcard include/config/x86/32/lazy/gs.h) \
   include/uapi/linux/const.h \
-  arch/x86/include/asm/cache.h \
-    $(wildcard include/config/x86/l1/cache/shift.h) \
-    $(wildcard include/config/x86/internode/cache/shift.h) \
-    $(wildcard include/config/x86/vsmp.h) \
   arch/x86/include/asm/page_types.h \
     $(wildcard include/config/physical/start.h) \
     $(wildcard include/config/physical/align.h) \
@@ -49,10 +45,11 @@ deps_arch/x86/realmode/rm/reboot.o := \
   arch/x86/include/uapi/asm/bitsperlong.h \
   include/asm-generic/bitsperlong.h \
   include/uapi/asm-generic/bitsperlong.h \
-  arch/x86/include/asm/page_64_types.h \
-    $(wildcard include/config/kasan.h) \
-    $(wildcard include/config/randomize/base.h) \
-    $(wildcard include/config/randomize/base/max/offset.h) \
+  arch/x86/include/asm/page_32_types.h \
+    $(wildcard include/config/highmem4g.h) \
+    $(wildcard include/config/highmem64g.h) \
+    $(wildcard include/config/page/offset.h) \
+    $(wildcard include/config/x86/pae.h) \
   arch/x86/include/asm/processor-flags.h \
     $(wildcard include/config/vm86.h) \
   arch/x86/include/uapi/asm/processor-flags.h \

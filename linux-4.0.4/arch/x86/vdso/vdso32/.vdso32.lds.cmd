@@ -23,14 +23,16 @@ deps_arch/x86/vdso/vdso32/vdso32.lds := \
     $(wildcard include/config/physical/start.h) \
     $(wildcard include/config/physical/align.h) \
   include/uapi/linux/const.h \
-  arch/x86/include/asm/page_64_types.h \
-    $(wildcard include/config/kasan.h) \
-    $(wildcard include/config/randomize/base.h) \
-    $(wildcard include/config/randomize/base/max/offset.h) \
-  arch/x86/include/asm/page_64.h \
+  arch/x86/include/asm/page_32_types.h \
+    $(wildcard include/config/highmem4g.h) \
+    $(wildcard include/config/highmem64g.h) \
+    $(wildcard include/config/page/offset.h) \
+    $(wildcard include/config/x86/pae.h) \
+  arch/x86/include/asm/page_32.h \
     $(wildcard include/config/debug/virtual.h) \
     $(wildcard include/config/flatmem.h) \
-    $(wildcard include/config/x86/vsyscall/emulation.h) \
+    $(wildcard include/config/x86/use/3dnow.h) \
+    $(wildcard include/config/x86/3dnow.h) \
   include/asm-generic/memory_model.h \
     $(wildcard include/config/discontigmem.h) \
     $(wildcard include/config/sparsemem/vmemmap.h) \

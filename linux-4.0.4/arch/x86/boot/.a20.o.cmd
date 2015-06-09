@@ -36,7 +36,7 @@ deps_arch/x86/boot/a20.o := \
     $(wildcard include/config/arch/use/builtin/bswap.h) \
   arch/x86/include/asm/posix_types.h \
     $(wildcard include/config/x86/32.h) \
-  arch/x86/include/uapi/asm/posix_types_64.h \
+  arch/x86/include/uapi/asm/posix_types_32.h \
   include/uapi/asm-generic/posix_types.h \
   include/linux/edd.h \
   include/uapi/linux/edd.h \
@@ -52,13 +52,15 @@ deps_arch/x86/boot/a20.o := \
     $(wildcard include/config/proc/fs.h) \
   include/uapi/linux/const.h \
   arch/x86/include/asm/page_types.h \
-  arch/x86/include/asm/page_64_types.h \
-    $(wildcard include/config/kasan.h) \
-    $(wildcard include/config/randomize/base.h) \
-    $(wildcard include/config/randomize/base/max/offset.h) \
-  arch/x86/include/asm/pgtable_64_types.h \
-  arch/x86/include/asm/sparsemem.h \
-    $(wildcard include/config/sparsemem.h) \
+  arch/x86/include/asm/page_32_types.h \
+    $(wildcard include/config/highmem4g.h) \
+    $(wildcard include/config/highmem64g.h) \
+    $(wildcard include/config/page/offset.h) \
+  arch/x86/include/asm/pgtable_32_types.h \
+    $(wildcard include/config/highmem.h) \
+  arch/x86/include/asm/pgtable-2level_types.h \
+  include/asm-generic/pgtable-nopud.h \
+  include/asm-generic/pgtable-nopmd.h \
   arch/x86/include/uapi/asm/boot.h \
   arch/x86/include/asm/setup.h \
     $(wildcard include/config/x86/intel/mid.h) \

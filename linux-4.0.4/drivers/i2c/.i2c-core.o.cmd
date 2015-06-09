@@ -1,4 +1,4 @@
-cmd_drivers/i2c/i2c-core.o := gcc -Wp,-MD,drivers/i2c/.i2c-core.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.9/include -I./arch/x86/include -Iarch/x86/include/generated/uapi -Iarch/x86/include/generated  -Iinclude -I./arch/x86/include/uapi -Iarch/x86/include/generated/uapi -I./include/uapi -Iinclude/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -std=gnu89 -m64 -mno-80387 -mno-fp-ret-in-387 -mtune=generic -mno-red-zone -mcmodel=kernel -funit-at-a-time -maccumulate-outgoing-args -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -DCONFIG_AS_FXSAVEQ=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_CRC32=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -pipe -Wno-sign-compare -fno-asynchronous-unwind-tables -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -fno-delete-null-pointer-checks -Os -Wno-maybe-uninitialized --param=allow-store-data-races=0 -Wframe-larger-than=2048 -fno-stack-protector -Wno-unused-but-set-variable -fno-omit-frame-pointer -fno-optimize-sibling-calls -fno-var-tracking-assignments -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -Werror=date-time -DCC_HAVE_ASM_GOTO -Wno-deprecated-declarations    -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(i2c_core)"  -D"KBUILD_MODNAME=KBUILD_STR(i2c_core)" -c -o drivers/i2c/i2c-core.o drivers/i2c/i2c-core.c
+cmd_drivers/i2c/i2c-core.o := gcc -Wp,-MD,drivers/i2c/.i2c-core.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.9/include -I./arch/x86/include -Iarch/x86/include/generated/uapi -Iarch/x86/include/generated  -Iinclude -I./arch/x86/include/uapi -Iarch/x86/include/generated/uapi -I./include/uapi -Iinclude/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -std=gnu89 -m32 -msoft-float -mregparm=3 -freg-struct-return -fno-pic -mpreferred-stack-boundary=2 -march=i686 -Wa,-mtune=generic32 -ffreestanding -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_CRC32=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -pipe -Wno-sign-compare -fno-asynchronous-unwind-tables -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -fno-delete-null-pointer-checks -Os -Wno-maybe-uninitialized --param=allow-store-data-races=0 -Wframe-larger-than=2048 -fno-stack-protector -Wno-unused-but-set-variable -fomit-frame-pointer -fno-var-tracking-assignments -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -Werror=date-time -DCC_HAVE_ASM_GOTO -Wno-deprecated-declarations    -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(i2c_core)"  -D"KBUILD_MODNAME=KBUILD_STR(i2c_core)" -c -o drivers/i2c/i2c-core.o drivers/i2c/i2c-core.c
 
 source_drivers/i2c/i2c-core.o := drivers/i2c/i2c-core.c
 
@@ -61,7 +61,7 @@ deps_drivers/i2c/i2c-core.o := \
     $(wildcard include/config/arch/use/builtin/bswap.h) \
   arch/x86/include/asm/posix_types.h \
     $(wildcard include/config/x86/32.h) \
-  arch/x86/include/uapi/asm/posix_types_64.h \
+  arch/x86/include/uapi/asm/posix_types_32.h \
   include/uapi/asm-generic/posix_types.h \
   include/linux/poison.h \
     $(wildcard include/config/illegal/pointer/value.h) \
@@ -93,17 +93,14 @@ deps_drivers/i2c/i2c-core.o := \
   arch/x86/include/asm/segment.h \
     $(wildcard include/config/cc/stackprotector.h) \
     $(wildcard include/config/x86/32/lazy/gs.h) \
-  arch/x86/include/asm/cache.h \
-    $(wildcard include/config/x86/l1/cache/shift.h) \
-    $(wildcard include/config/x86/internode/cache/shift.h) \
-    $(wildcard include/config/x86/vsmp.h) \
   arch/x86/include/asm/page_types.h \
     $(wildcard include/config/physical/start.h) \
     $(wildcard include/config/physical/align.h) \
-  arch/x86/include/asm/page_64_types.h \
-    $(wildcard include/config/kasan.h) \
-    $(wildcard include/config/randomize/base.h) \
-    $(wildcard include/config/randomize/base/max/offset.h) \
+  arch/x86/include/asm/page_32_types.h \
+    $(wildcard include/config/highmem4g.h) \
+    $(wildcard include/config/highmem64g.h) \
+    $(wildcard include/config/page/offset.h) \
+    $(wildcard include/config/x86/pae.h) \
   arch/x86/include/uapi/asm/ptrace.h \
   arch/x86/include/uapi/asm/ptrace-abi.h \
   arch/x86/include/asm/processor-flags.h \
@@ -116,7 +113,6 @@ deps_drivers/i2c/i2c-core.o := \
   arch/x86/include/asm/required-features.h \
     $(wildcard include/config/x86/minimum/cpu/family.h) \
     $(wildcard include/config/math/emulation.h) \
-    $(wildcard include/config/x86/pae.h) \
     $(wildcard include/config/x86/cmpxchg64.h) \
     $(wildcard include/config/x86/use/3dnow.h) \
     $(wildcard include/config/x86/p6/nop.h) \
@@ -128,6 +124,7 @@ deps_drivers/i2c/i2c-core.o := \
     $(wildcard include/config/x86/ppro/fence.h) \
   arch/x86/include/asm/nops.h \
     $(wildcard include/config/mk7.h) \
+  include/asm-generic/bitops/fls64.h \
   include/asm-generic/bitops/find.h \
     $(wildcard include/config/generic/find/first/bit.h) \
   include/asm-generic/bitops/sched.h \
@@ -159,12 +156,16 @@ deps_drivers/i2c/i2c-core.o := \
     $(wildcard include/config/arch/has/cache/line/size.h) \
   include/uapi/linux/kernel.h \
   include/uapi/linux/sysinfo.h \
+  arch/x86/include/asm/cache.h \
+    $(wildcard include/config/x86/l1/cache/shift.h) \
+    $(wildcard include/config/x86/internode/cache/shift.h) \
+    $(wildcard include/config/x86/vsmp.h) \
   include/linux/dynamic_debug.h \
   include/linux/string.h \
     $(wildcard include/config/binary/printf.h) \
   include/uapi/linux/string.h \
   arch/x86/include/asm/string.h \
-  arch/x86/include/asm/string_64.h \
+  arch/x86/include/asm/string_32.h \
     $(wildcard include/config/kmemcheck.h) \
   include/linux/errno.h \
   include/uapi/linux/errno.h \
@@ -210,10 +211,10 @@ deps_drivers/i2c/i2c-core.o := \
   arch/x86/include/asm/thread_info.h \
     $(wildcard include/config/ia32/emulation.h) \
   arch/x86/include/asm/page.h \
-  arch/x86/include/asm/page_64.h \
+  arch/x86/include/asm/page_32.h \
     $(wildcard include/config/debug/virtual.h) \
     $(wildcard include/config/flatmem.h) \
-    $(wildcard include/config/x86/vsyscall/emulation.h) \
+    $(wildcard include/config/x86/3dnow.h) \
   include/linux/range.h \
   include/asm-generic/memory_model.h \
     $(wildcard include/config/discontigmem.h) \
@@ -232,8 +233,11 @@ deps_drivers/i2c/i2c-core.o := \
   arch/x86/include/asm/pgtable_types.h \
     $(wildcard include/config/mem/soft/dirty.h) \
     $(wildcard include/config/proc/fs.h) \
-  arch/x86/include/asm/pgtable_64_types.h \
-  arch/x86/include/asm/sparsemem.h \
+  arch/x86/include/asm/pgtable_32_types.h \
+    $(wildcard include/config/highmem.h) \
+  arch/x86/include/asm/pgtable-2level_types.h \
+  include/asm-generic/pgtable-nopud.h \
+  include/asm-generic/pgtable-nopmd.h \
   arch/x86/include/asm/msr.h \
   arch/x86/include/uapi/asm/msr.h \
   arch/x86/include/uapi/asm/msr-index.h \
@@ -255,7 +259,6 @@ deps_drivers/i2c/i2c-core.o := \
   include/linux/math64.h \
     $(wildcard include/config/arch/supports/int128.h) \
   arch/x86/include/asm/div64.h \
-  include/asm-generic/div64.h \
   include/linux/err.h \
   include/linux/irqflags.h \
     $(wildcard include/config/trace/irqflags.h) \
@@ -267,8 +270,8 @@ deps_drivers/i2c/i2c-core.o := \
     $(wildcard include/config/generic/atomic64.h) \
   arch/x86/include/asm/atomic.h \
   arch/x86/include/asm/cmpxchg.h \
-  arch/x86/include/asm/cmpxchg_64.h \
-  arch/x86/include/asm/atomic64_64.h \
+  arch/x86/include/asm/cmpxchg_32.h \
+  arch/x86/include/asm/atomic64_32.h \
   include/asm-generic/atomic-long.h \
   include/linux/bottom_half.h \
   include/linux/preempt_mask.h \
@@ -290,7 +293,6 @@ deps_drivers/i2c/i2c-core.o := \
   include/linux/kmod.h \
   include/linux/gfp.h \
     $(wildcard include/config/numa.h) \
-    $(wildcard include/config/highmem.h) \
     $(wildcard include/config/zone/dma.h) \
     $(wildcard include/config/zone/dma32.h) \
     $(wildcard include/config/pm/sleep.h) \
@@ -329,6 +331,7 @@ deps_drivers/i2c/i2c-core.o := \
     $(wildcard include/config/hugetlb/page/size/variable.h) \
   include/linux/page-flags-layout.h \
   include/generated/bounds.h \
+  arch/x86/include/asm/sparsemem.h \
   include/linux/memory_hotplug.h \
     $(wildcard include/config/memory/hotremove.h) \
     $(wildcard include/config/have/arch/nodedata/extension.h) \
@@ -402,7 +405,7 @@ deps_drivers/i2c/i2c-core.o := \
   arch/x86/include/asm/elf.h \
     $(wildcard include/config/x86/x32/abi.h) \
   arch/x86/include/asm/user.h \
-  arch/x86/include/asm/user_64.h \
+  arch/x86/include/asm/user_32.h \
   arch/x86/include/uapi/asm/auxvec.h \
   arch/x86/include/asm/vdso.h \
     $(wildcard include/config/x86/x32.h) \
@@ -419,6 +422,8 @@ deps_drivers/i2c/i2c-core.o := \
   include/linux/uprobes.h \
     $(wildcard include/config/uprobes.h) \
   arch/x86/include/asm/mmu.h \
+  arch/x86/include/asm/desc.h \
+  arch/x86/include/uapi/asm/ldt.h \
   include/uapi/linux/elf.h \
   include/uapi/linux/elf-em.h \
   include/linux/kobject.h \
@@ -480,6 +485,7 @@ deps_drivers/i2c/i2c-core.o := \
   include/linux/kmemleak.h \
     $(wildcard include/config/debug/kmemleak.h) \
   include/linux/kasan.h \
+    $(wildcard include/config/kasan.h) \
     $(wildcard include/config/kasan/shadow/offset.h) \
   include/linux/i2c.h \
     $(wildcard include/config/i2c.h) \
@@ -590,15 +596,6 @@ deps_drivers/i2c/i2c-core.o := \
     $(wildcard include/config/have/arch/seccomp/filter.h) \
     $(wildcard include/config/seccomp/filter.h) \
   include/uapi/linux/seccomp.h \
-  arch/x86/include/asm/seccomp.h \
-  arch/x86/include/asm/seccomp_64.h \
-  include/uapi/linux/unistd.h \
-  arch/x86/include/asm/unistd.h \
-  arch/x86/include/uapi/asm/unistd.h \
-  arch/x86/include/generated/uapi/asm/unistd_64.h \
-  arch/x86/include/generated/asm/unistd_64_x32.h \
-  arch/x86/include/asm/ia32_unistd.h \
-  arch/x86/include/generated/asm/unistd_32_ia32.h \
   include/linux/rculist.h \
   include/linux/rtmutex.h \
     $(wildcard include/config/debug/rt/mutexes.h) \
@@ -697,7 +694,7 @@ deps_drivers/i2c/i2c-core.o := \
     $(wildcard include/config/debug/strict/user/copy/checks.h) \
   arch/x86/include/asm/smap.h \
     $(wildcard include/config/x86/smap.h) \
-  arch/x86/include/asm/uaccess_64.h \
+  arch/x86/include/asm/uaccess_32.h \
   include/linux/irqdomain.h \
     $(wildcard include/config/irq/domain.h) \
   include/linux/radix-tree.h \
@@ -764,149 +761,6 @@ deps_drivers/i2c/i2c-core.o := \
   include/linux/tracepoint.h \
     $(wildcard include/config/have/syscall/tracepoints.h) \
   include/trace/define_trace.h \
-  include/trace/ftrace.h \
-  include/linux/ftrace_event.h \
-  include/linux/ring_buffer.h \
-    $(wildcard include/config/ring/buffer/allow/swap.h) \
-  include/linux/kmemcheck.h \
-  include/linux/mm.h \
-    $(wildcard include/config/ppc.h) \
-    $(wildcard include/config/parisc.h) \
-    $(wildcard include/config/metag.h) \
-    $(wildcard include/config/ksm.h) \
-    $(wildcard include/config/shmem.h) \
-    $(wildcard include/config/debug/vm/rb.h) \
-    $(wildcard include/config/debug/pagealloc.h) \
-  include/linux/debug_locks.h \
-    $(wildcard include/config/debug/locking/api/selftests.h) \
-  include/linux/bit_spinlock.h \
-  include/linux/shrinker.h \
-  include/linux/page_ext.h \
-    $(wildcard include/config/page/owner.h) \
-  include/linux/stacktrace.h \
-    $(wildcard include/config/stacktrace.h) \
-    $(wildcard include/config/user/stacktrace/support.h) \
-  arch/x86/include/asm/pgtable.h \
-    $(wildcard include/config/have/arch/soft/dirty.h) \
-  arch/x86/include/asm/e820.h \
-    $(wildcard include/config/efi.h) \
-    $(wildcard include/config/memtest.h) \
-  arch/x86/include/uapi/asm/e820.h \
-    $(wildcard include/config/intel/txt.h) \
-  arch/x86/include/asm/x86_init.h \
-  arch/x86/include/uapi/asm/bootparam.h \
-  include/linux/screen_info.h \
-  include/uapi/linux/screen_info.h \
-  include/linux/apm_bios.h \
-  include/uapi/linux/apm_bios.h \
-  include/linux/edd.h \
-  include/uapi/linux/edd.h \
-  arch/x86/include/asm/ist.h \
-  arch/x86/include/uapi/asm/ist.h \
-  include/video/edid.h \
-  include/uapi/video/edid.h \
-  arch/x86/include/asm/pgtable_64.h \
-  include/asm-generic/pgtable.h \
-  include/linux/page-flags.h \
-    $(wildcard include/config/pageflags/extended.h) \
-    $(wildcard include/config/arch/uses/pg/uncached.h) \
-    $(wildcard include/config/memory/failure.h) \
-    $(wildcard include/config/swap.h) \
-  include/linux/huge_mm.h \
-  include/linux/vmstat.h \
-    $(wildcard include/config/vm/event/counters.h) \
-    $(wildcard include/config/debug/tlbflush.h) \
-    $(wildcard include/config/debug/vm/vmacache.h) \
-  include/linux/vm_event_item.h \
-    $(wildcard include/config/migration.h) \
-    $(wildcard include/config/memory/balloon.h) \
-    $(wildcard include/config/balloon/compaction.h) \
-  include/linux/seq_file.h \
-  include/linux/poll.h \
-  include/linux/fs.h \
-    $(wildcard include/config/fs/posix/acl.h) \
-    $(wildcard include/config/ima.h) \
-    $(wildcard include/config/fsnotify.h) \
-    $(wildcard include/config/file/locking.h) \
-    $(wildcard include/config/quota.h) \
-    $(wildcard include/config/fs/dax.h) \
-  include/linux/kdev_t.h \
-  include/uapi/linux/kdev_t.h \
-  include/linux/dcache.h \
-  include/linux/rculist_bl.h \
-  include/linux/list_bl.h \
-  include/linux/lockref.h \
-    $(wildcard include/config/arch/use/cmpxchg/lockref.h) \
-  include/linux/path.h \
-  include/linux/list_lru.h \
-  include/linux/semaphore.h \
-  include/uapi/linux/fiemap.h \
-  include/linux/migrate_mode.h \
-  include/linux/percpu-rwsem.h \
-  include/linux/blk_types.h \
-    $(wildcard include/config/blk/cgroup.h) \
-    $(wildcard include/config/blk/dev/integrity.h) \
-  include/uapi/linux/fs.h \
-  include/uapi/linux/limits.h \
-  include/linux/quota.h \
-    $(wildcard include/config/quota/netlink/interface.h) \
-  include/uapi/linux/dqblk_xfs.h \
-  include/linux/dqblk_v1.h \
-  include/linux/dqblk_v2.h \
-  include/linux/dqblk_qtree.h \
-  include/linux/projid.h \
-  include/uapi/linux/quota.h \
-  include/linux/nfs_fs_i.h \
-  include/linux/fcntl.h \
-  include/uapi/linux/fcntl.h \
-  arch/x86/include/uapi/asm/fcntl.h \
-  include/uapi/asm-generic/fcntl.h \
-  include/uapi/linux/poll.h \
-  arch/x86/include/uapi/asm/poll.h \
-  include/uapi/asm-generic/poll.h \
-  include/linux/trace_seq.h \
-  include/linux/seq_buf.h \
-  include/linux/perf_event.h \
-    $(wildcard include/config/have/hw/breakpoint.h) \
-    $(wildcard include/config/function/tracer.h) \
-    $(wildcard include/config/cgroup/perf.h) \
-    $(wildcard include/config/cpu/sup/intel.h) \
-  include/uapi/linux/perf_event.h \
-  arch/x86/include/asm/perf_event.h \
-    $(wildcard include/config/cpu/sup/amd.h) \
-  arch/x86/include/asm/stacktrace.h \
-    $(wildcard include/config/frame/pointer.h) \
-  include/linux/uaccess.h \
-  include/linux/ptrace.h \
-  include/linux/pid_namespace.h \
-    $(wildcard include/config/pid/ns.h) \
-  include/linux/nsproxy.h \
-  include/linux/ns_common.h \
-  include/uapi/linux/ptrace.h \
-  arch/x86/include/asm/local64.h \
-  include/asm-generic/local64.h \
-  arch/x86/include/asm/local.h \
-  arch/x86/include/asm/hw_breakpoint.h \
-  arch/x86/include/uapi/asm/hw_breakpoint.h \
-  include/linux/kdebug.h \
-  arch/x86/include/asm/kdebug.h \
-    $(wildcard include/config/kexec.h) \
-  include/linux/ftrace.h \
-    $(wildcard include/config/dynamic/ftrace/with/regs.h) \
-    $(wildcard include/config/dynamic/ftrace.h) \
-    $(wildcard include/config/stack/tracer.h) \
-    $(wildcard include/config/ftrace/syscalls.h) \
-  include/linux/trace_clock.h \
-  arch/x86/include/asm/trace_clock.h \
-  include/linux/kallsyms.h \
-  arch/x86/include/asm/ftrace.h \
-  include/linux/irq_work.h \
-    $(wildcard include/config/irq/work.h) \
-  arch/x86/include/asm/irq_work.h \
-  include/linux/jump_label_ratelimit.h \
-  include/linux/perf_regs.h \
-    $(wildcard include/config/have/perf/regs.h) \
-  arch/x86/include/uapi/asm/perf_regs.h \
 
 drivers/i2c/i2c-core.o: $(deps_drivers/i2c/i2c-core.o)
 

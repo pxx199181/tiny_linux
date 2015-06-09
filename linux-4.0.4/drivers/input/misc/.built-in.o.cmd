@@ -1,1 +1,1 @@
-cmd_drivers/input/misc/built-in.o :=  ld -m elf_i386   -r -o drivers/input/misc/built-in.o drivers/input/misc/uinput.o 
+cmd_drivers/input/misc/built-in.o :=  rm -f drivers/input/misc/built-in.o; ar rcsD drivers/input/misc/built-in.o

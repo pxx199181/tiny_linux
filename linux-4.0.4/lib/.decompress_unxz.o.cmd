@@ -1,4 +1,4 @@
-cmd_lib/decompress_unxz.o := gcc -Wp,-MD,lib/.decompress_unxz.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.9/include -I./arch/x86/include -Iarch/x86/include/generated/uapi -Iarch/x86/include/generated  -Iinclude -I./arch/x86/include/uapi -Iarch/x86/include/generated/uapi -I./include/uapi -Iinclude/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -std=gnu89 -m32 -msoft-float -mregparm=3 -freg-struct-return -fno-pic -mpreferred-stack-boundary=2 -march=i686 -maccumulate-outgoing-args -Wa,-mtune=generic32 -ffreestanding -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_CRC32=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -pipe -Wno-sign-compare -fno-asynchronous-unwind-tables -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -fno-delete-null-pointer-checks -O2 --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fstack-protector -Wno-unused-but-set-variable -fno-omit-frame-pointer -fno-optimize-sibling-calls -fno-var-tracking-assignments -g -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -Werror=date-time -DCC_HAVE_ASM_GOTO    -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(decompress_unxz)"  -D"KBUILD_MODNAME=KBUILD_STR(decompress_unxz)" -c -o lib/.tmp_decompress_unxz.o lib/decompress_unxz.c
+cmd_lib/decompress_unxz.o := gcc -Wp,-MD,lib/.decompress_unxz.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.9/include -I./arch/x86/include -Iarch/x86/include/generated/uapi -Iarch/x86/include/generated  -Iinclude -I./arch/x86/include/uapi -Iarch/x86/include/generated/uapi -I./include/uapi -Iinclude/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -std=gnu89 -m32 -msoft-float -mregparm=3 -freg-struct-return -fno-pic -mpreferred-stack-boundary=2 -march=i686 -Wa,-mtune=generic32 -ffreestanding -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_CRC32=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -pipe -Wno-sign-compare -fno-asynchronous-unwind-tables -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -fno-delete-null-pointer-checks -Os -Wno-maybe-uninitialized --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fno-stack-protector -Wno-unused-but-set-variable -fomit-frame-pointer -fno-var-tracking-assignments -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -Werror=date-time -DCC_HAVE_ASM_GOTO    -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(decompress_unxz)"  -D"KBUILD_MODNAME=KBUILD_STR(decompress_unxz)" -c -o lib/decompress_unxz.o lib/decompress_unxz.c
 
 source_lib/decompress_unxz.o := lib/decompress_unxz.c
 
@@ -88,26 +88,6 @@ deps_lib/decompress_unxz.o := \
   arch/x86/include/asm/processor-flags.h \
     $(wildcard include/config/vm86.h) \
   arch/x86/include/uapi/asm/processor-flags.h \
-  arch/x86/include/asm/paravirt_types.h \
-    $(wildcard include/config/x86/local/apic.h) \
-    $(wildcard include/config/paravirt/debug.h) \
-  arch/x86/include/asm/desc_defs.h \
-  arch/x86/include/asm/kmap_types.h \
-    $(wildcard include/config/debug/highmem.h) \
-  include/asm-generic/kmap_types.h \
-  arch/x86/include/asm/pgtable_types.h \
-    $(wildcard include/config/kmemcheck.h) \
-    $(wildcard include/config/mem/soft/dirty.h) \
-    $(wildcard include/config/proc/fs.h) \
-  arch/x86/include/asm/pgtable_32_types.h \
-    $(wildcard include/config/highmem.h) \
-  arch/x86/include/asm/pgtable-2level_types.h \
-  include/asm-generic/pgtable-nopud.h \
-  include/asm-generic/pgtable-nopmd.h \
-  arch/x86/include/asm/spinlock_types.h \
-    $(wildcard include/config/paravirt/spinlocks.h) \
-    $(wildcard include/config/nr/cpus.h) \
-  include/asm-generic/qrwlock_types.h \
   include/asm-generic/ptrace.h \
   arch/x86/include/asm/cpufeature.h \
     $(wildcard include/config/x86/feature/names.h) \
@@ -163,7 +143,17 @@ deps_lib/decompress_unxz.o := \
     $(wildcard include/config/x86/internode/cache/shift.h) \
     $(wildcard include/config/x86/vsmp.h) \
   include/linux/dynamic_debug.h \
-  arch/x86/include/asm/div64.h \
+  include/linux/string.h \
+    $(wildcard include/config/binary/printf.h) \
+  include/uapi/linux/string.h \
+  arch/x86/include/asm/string.h \
+  arch/x86/include/asm/string_32.h \
+    $(wildcard include/config/kmemcheck.h) \
+  include/linux/errno.h \
+  include/uapi/linux/errno.h \
+  arch/x86/include/uapi/asm/errno.h \
+  include/uapi/asm-generic/errno.h \
+  include/uapi/asm-generic/errno-base.h \
   include/linux/fs.h \
     $(wildcard include/config/sysfs.h) \
     $(wildcard include/config/fs/posix/acl.h) \
@@ -199,6 +189,7 @@ deps_lib/decompress_unxz.o := \
   include/asm-generic/percpu.h \
     $(wildcard include/config/have/setup/per/cpu/area.h) \
   include/linux/threads.h \
+    $(wildcard include/config/nr/cpus.h) \
     $(wildcard include/config/base/small.h) \
   include/linux/percpu-defs.h \
     $(wildcard include/config/debug/force/weak/per/cpu.h) \
@@ -219,11 +210,6 @@ deps_lib/decompress_unxz.o := \
     $(wildcard include/config/debug/virtual.h) \
     $(wildcard include/config/flatmem.h) \
     $(wildcard include/config/x86/3dnow.h) \
-  include/linux/string.h \
-    $(wildcard include/config/binary/printf.h) \
-  include/uapi/linux/string.h \
-  arch/x86/include/asm/string.h \
-  arch/x86/include/asm/string_32.h \
   include/linux/range.h \
   include/asm-generic/memory_model.h \
     $(wildcard include/config/discontigmem.h) \
@@ -239,6 +225,14 @@ deps_lib/decompress_unxz.o := \
   arch/x86/include/asm/sigcontext.h \
   arch/x86/include/uapi/asm/sigcontext.h \
   arch/x86/include/asm/current.h \
+  arch/x86/include/asm/pgtable_types.h \
+    $(wildcard include/config/mem/soft/dirty.h) \
+    $(wildcard include/config/proc/fs.h) \
+  arch/x86/include/asm/pgtable_32_types.h \
+    $(wildcard include/config/highmem.h) \
+  arch/x86/include/asm/pgtable-2level_types.h \
+  include/asm-generic/pgtable-nopud.h \
+  include/asm-generic/pgtable-nopmd.h \
   arch/x86/include/asm/msr.h \
   arch/x86/include/uapi/asm/msr.h \
   arch/x86/include/uapi/asm/msr-index.h \
@@ -246,9 +240,6 @@ deps_lib/decompress_unxz.o := \
   arch/x86/include/uapi/asm/ioctl.h \
   include/asm-generic/ioctl.h \
   include/uapi/asm-generic/ioctl.h \
-  arch/x86/include/uapi/asm/errno.h \
-  include/uapi/asm-generic/errno.h \
-  include/uapi/asm-generic/errno-base.h \
   arch/x86/include/asm/cpumask.h \
   include/linux/cpumask.h \
     $(wildcard include/config/cpumask/offstack.h) \
@@ -256,12 +247,13 @@ deps_lib/decompress_unxz.o := \
     $(wildcard include/config/debug/per/cpu/maps.h) \
     $(wildcard include/config/disable/obsolete/cpumask/functions.h) \
   include/linux/bitmap.h \
-  arch/x86/include/asm/paravirt.h \
+  arch/x86/include/asm/desc_defs.h \
   arch/x86/include/asm/special_insns.h \
   include/linux/personality.h \
   include/uapi/linux/personality.h \
   include/linux/math64.h \
     $(wildcard include/config/arch/supports/int128.h) \
+  arch/x86/include/asm/div64.h \
   include/linux/err.h \
   include/linux/irqflags.h \
     $(wildcard include/config/trace/irqflags.h) \
@@ -279,47 +271,14 @@ deps_lib/decompress_unxz.o := \
   include/linux/bottom_half.h \
   include/linux/preempt_mask.h \
   include/linux/spinlock_types.h \
+  include/linux/spinlock_types_up.h \
   include/linux/lockdep.h \
     $(wildcard include/config/lock/stat.h) \
     $(wildcard include/config/prove/rcu.h) \
   include/linux/rwlock_types.h \
-  arch/x86/include/asm/spinlock.h \
-  include/linux/jump_label.h \
-    $(wildcard include/config/jump/label.h) \
-  arch/x86/include/asm/jump_label.h \
-  arch/x86/include/asm/qrwlock.h \
-  include/asm-generic/qrwlock.h \
+  include/linux/spinlock_up.h \
   include/linux/rwlock.h \
-  include/linux/spinlock_api_smp.h \
-    $(wildcard include/config/inline/spin/lock.h) \
-    $(wildcard include/config/inline/spin/lock/bh.h) \
-    $(wildcard include/config/inline/spin/lock/irq.h) \
-    $(wildcard include/config/inline/spin/lock/irqsave.h) \
-    $(wildcard include/config/inline/spin/trylock.h) \
-    $(wildcard include/config/inline/spin/trylock/bh.h) \
-    $(wildcard include/config/uninline/spin/unlock.h) \
-    $(wildcard include/config/inline/spin/unlock/bh.h) \
-    $(wildcard include/config/inline/spin/unlock/irq.h) \
-    $(wildcard include/config/inline/spin/unlock/irqrestore.h) \
-  include/linux/rwlock_api_smp.h \
-    $(wildcard include/config/inline/read/lock.h) \
-    $(wildcard include/config/inline/write/lock.h) \
-    $(wildcard include/config/inline/read/lock/bh.h) \
-    $(wildcard include/config/inline/write/lock/bh.h) \
-    $(wildcard include/config/inline/read/lock/irq.h) \
-    $(wildcard include/config/inline/write/lock/irq.h) \
-    $(wildcard include/config/inline/read/lock/irqsave.h) \
-    $(wildcard include/config/inline/write/lock/irqsave.h) \
-    $(wildcard include/config/inline/read/trylock.h) \
-    $(wildcard include/config/inline/write/trylock.h) \
-    $(wildcard include/config/inline/read/unlock.h) \
-    $(wildcard include/config/inline/write/unlock.h) \
-    $(wildcard include/config/inline/read/unlock/bh.h) \
-    $(wildcard include/config/inline/write/unlock/bh.h) \
-    $(wildcard include/config/inline/read/unlock/irq.h) \
-    $(wildcard include/config/inline/write/unlock/irq.h) \
-    $(wildcard include/config/inline/read/unlock/irqrestore.h) \
-    $(wildcard include/config/inline/write/unlock/irqrestore.h) \
+  include/linux/spinlock_api_up.h \
   include/uapi/linux/wait.h \
   include/linux/kdev_t.h \
   include/uapi/linux/kdev_t.h \
@@ -343,7 +302,7 @@ deps_lib/decompress_unxz.o := \
   include/linux/debugobjects.h \
     $(wildcard include/config/debug/objects.h) \
     $(wildcard include/config/debug/objects/free.h) \
-  include/linux/rcutree.h \
+  include/linux/rcutiny.h \
   include/linux/rculist_bl.h \
   include/linux/list_bl.h \
   include/linux/bit_spinlock.h \
@@ -395,45 +354,51 @@ deps_lib/decompress_unxz.o := \
     $(wildcard include/config/debug/vm.h) \
   include/linux/smp.h \
     $(wildcard include/config/up/late/init.h) \
-  include/linux/errno.h \
-  include/uapi/linux/errno.h \
-  arch/x86/include/asm/smp.h \
-    $(wildcard include/config/x86/io/apic.h) \
-    $(wildcard include/config/x86/32/smp.h) \
-    $(wildcard include/config/debug/nmi/selftest.h) \
-  arch/x86/include/asm/mpspec.h \
-    $(wildcard include/config/eisa.h) \
-    $(wildcard include/config/x86/mpparse.h) \
-  arch/x86/include/asm/mpspec_def.h \
-  arch/x86/include/asm/x86_init.h \
-  arch/x86/include/uapi/asm/bootparam.h \
-  include/linux/screen_info.h \
-  include/uapi/linux/screen_info.h \
-  include/linux/apm_bios.h \
-  include/uapi/linux/apm_bios.h \
-  include/linux/edd.h \
-  include/uapi/linux/edd.h \
-  arch/x86/include/asm/e820.h \
-    $(wildcard include/config/efi.h) \
-    $(wildcard include/config/hibernation.h) \
-    $(wildcard include/config/memtest.h) \
-  arch/x86/include/uapi/asm/e820.h \
-    $(wildcard include/config/intel/txt.h) \
-  include/linux/ioport.h \
-    $(wildcard include/config/memory/hotremove.h) \
-  arch/x86/include/asm/ist.h \
-  arch/x86/include/uapi/asm/ist.h \
-  include/video/edid.h \
-  include/uapi/video/edid.h \
-  arch/x86/include/asm/apicdef.h \
-  arch/x86/include/asm/apic.h \
-    $(wildcard include/config/x86/x2apic.h) \
-  include/linux/pm.h \
-    $(wildcard include/config/vt/console/sleep.h) \
-    $(wildcard include/config/pm.h) \
+  include/linux/pfn.h \
+  include/linux/blk_types.h \
+    $(wildcard include/config/blk/cgroup.h) \
+    $(wildcard include/config/blk/dev/integrity.h) \
+  include/uapi/linux/fs.h \
+  include/uapi/linux/limits.h \
+  include/linux/quota.h \
+    $(wildcard include/config/quota/netlink/interface.h) \
+  include/linux/percpu_counter.h \
+  include/linux/gfp.h \
+    $(wildcard include/config/zone/dma.h) \
+    $(wildcard include/config/zone/dma32.h) \
     $(wildcard include/config/pm/sleep.h) \
-    $(wildcard include/config/pm/clk.h) \
-    $(wildcard include/config/pm/generic/domains.h) \
+    $(wildcard include/config/cma.h) \
+  include/linux/mmzone.h \
+    $(wildcard include/config/force/max/zoneorder.h) \
+    $(wildcard include/config/memory/isolation.h) \
+    $(wildcard include/config/memcg.h) \
+    $(wildcard include/config/memory/hotplug.h) \
+    $(wildcard include/config/compaction.h) \
+    $(wildcard include/config/have/memblock/node/map.h) \
+    $(wildcard include/config/flat/node/mem/map.h) \
+    $(wildcard include/config/page/extension.h) \
+    $(wildcard include/config/no/bootmem.h) \
+    $(wildcard include/config/numa/balancing.h) \
+    $(wildcard include/config/have/memory/present.h) \
+    $(wildcard include/config/have/memoryless/nodes.h) \
+    $(wildcard include/config/need/node/memmap/size.h) \
+    $(wildcard include/config/need/multiple/nodes.h) \
+    $(wildcard include/config/have/arch/early/pfn/to/nid.h) \
+    $(wildcard include/config/sparsemem/extreme.h) \
+    $(wildcard include/config/have/arch/pfn/valid.h) \
+    $(wildcard include/config/nodes/span/other/nodes.h) \
+    $(wildcard include/config/holes/in/zone.h) \
+    $(wildcard include/config/arch/has/holes/memorymodel.h) \
+  include/linux/pageblock-flags.h \
+    $(wildcard include/config/hugetlb/page.h) \
+    $(wildcard include/config/hugetlb/page/size/variable.h) \
+  include/linux/page-flags-layout.h \
+  include/linux/memory_hotplug.h \
+    $(wildcard include/config/memory/hotremove.h) \
+    $(wildcard include/config/have/arch/nodedata/extension.h) \
+    $(wildcard include/config/have/bootmem/info/node.h) \
+  include/linux/notifier.h \
+  include/linux/srcu.h \
   include/linux/workqueue.h \
     $(wildcard include/config/debug/objects/work.h) \
     $(wildcard include/config/freezer.h) \
@@ -453,97 +418,12 @@ deps_lib/decompress_unxz.o := \
   arch/x86/include/asm/tsc.h \
     $(wildcard include/config/x86/tsc.h) \
   include/linux/timekeeping.h \
-  arch/x86/include/asm/fixmap.h \
-    $(wildcard include/config/x86/vsyscall/emulation.h) \
-    $(wildcard include/config/paravirt/clock.h) \
-    $(wildcard include/config/provide/ohci1394/dma/init.h) \
-    $(wildcard include/config/pci/mmconfig.h) \
-    $(wildcard include/config/x86/intel/mid.h) \
-  arch/x86/include/asm/acpi.h \
-    $(wildcard include/config/acpi.h) \
-    $(wildcard include/config/acpi/numa.h) \
-  include/acpi/pdc_intel.h \
-  arch/x86/include/asm/numa.h \
-    $(wildcard include/config/numa/emu.h) \
-  arch/x86/include/asm/topology.h \
-    $(wildcard include/config/x86/ht.h) \
-  include/asm-generic/topology.h \
-    $(wildcard include/config/have/memoryless/nodes.h) \
-  arch/x86/include/asm/numa_32.h \
-  arch/x86/include/asm/mmu.h \
-  arch/x86/include/asm/realmode.h \
-    $(wildcard include/config/acpi/sleep.h) \
-  arch/x86/include/asm/io.h \
-    $(wildcard include/config/mtrr.h) \
-  arch/x86/include/generated/asm/early_ioremap.h \
-  include/asm-generic/early_ioremap.h \
-    $(wildcard include/config/generic/early/ioremap.h) \
-  include/asm-generic/iomap.h \
-    $(wildcard include/config/has/ioport/map.h) \
-    $(wildcard include/config/pci.h) \
-    $(wildcard include/config/generic/iomap.h) \
-  include/asm-generic/pci_iomap.h \
-    $(wildcard include/config/no/generic/pci/ioport/map.h) \
-    $(wildcard include/config/generic/pci/iomap.h) \
-  include/linux/vmalloc.h \
-  arch/x86/include/asm/pvclock.h \
-  include/linux/clocksource.h \
-    $(wildcard include/config/arch/clocksource/data.h) \
-    $(wildcard include/config/clocksource/watchdog.h) \
-    $(wildcard include/config/clksrc/of.h) \
-  arch/x86/include/asm/clocksource.h \
-  arch/x86/include/asm/pvclock-abi.h \
-  include/asm-generic/fixmap.h \
-  arch/x86/include/asm/idle.h \
-  arch/x86/include/asm/io_apic.h \
-  arch/x86/include/asm/irq_vectors.h \
-    $(wildcard include/config/have/kvm.h) \
-  include/linux/pfn.h \
-  include/linux/blk_types.h \
-    $(wildcard include/config/blk/cgroup.h) \
-    $(wildcard include/config/blk/dev/integrity.h) \
-  include/uapi/linux/fs.h \
-  include/uapi/linux/limits.h \
-  include/linux/quota.h \
-    $(wildcard include/config/quota/netlink/interface.h) \
-  include/linux/percpu_counter.h \
-  include/linux/gfp.h \
-    $(wildcard include/config/zone/dma.h) \
-    $(wildcard include/config/zone/dma32.h) \
-    $(wildcard include/config/cma.h) \
-  include/linux/mmzone.h \
-    $(wildcard include/config/force/max/zoneorder.h) \
-    $(wildcard include/config/memory/isolation.h) \
-    $(wildcard include/config/memcg.h) \
-    $(wildcard include/config/memory/hotplug.h) \
-    $(wildcard include/config/compaction.h) \
-    $(wildcard include/config/have/memblock/node/map.h) \
-    $(wildcard include/config/flat/node/mem/map.h) \
-    $(wildcard include/config/page/extension.h) \
-    $(wildcard include/config/no/bootmem.h) \
-    $(wildcard include/config/numa/balancing.h) \
-    $(wildcard include/config/have/memory/present.h) \
-    $(wildcard include/config/need/node/memmap/size.h) \
-    $(wildcard include/config/need/multiple/nodes.h) \
-    $(wildcard include/config/have/arch/early/pfn/to/nid.h) \
-    $(wildcard include/config/sparsemem/extreme.h) \
-    $(wildcard include/config/have/arch/pfn/valid.h) \
-    $(wildcard include/config/nodes/span/other/nodes.h) \
-    $(wildcard include/config/holes/in/zone.h) \
-    $(wildcard include/config/arch/has/holes/memorymodel.h) \
-  include/linux/pageblock-flags.h \
-    $(wildcard include/config/hugetlb/page.h) \
-    $(wildcard include/config/hugetlb/page/size/variable.h) \
-  include/linux/page-flags-layout.h \
-  arch/x86/include/asm/sparsemem.h \
-  include/linux/memory_hotplug.h \
-    $(wildcard include/config/have/arch/nodedata/extension.h) \
-    $(wildcard include/config/have/bootmem/info/node.h) \
-  include/linux/notifier.h \
-  include/linux/srcu.h \
   include/linux/topology.h \
     $(wildcard include/config/use/percpu/numa/node/id.h) \
     $(wildcard include/config/sched/smt.h) \
+  arch/x86/include/asm/topology.h \
+    $(wildcard include/config/x86/ht.h) \
+  include/asm-generic/topology.h \
   include/uapi/linux/dqblk_xfs.h \
   include/linux/dqblk_v1.h \
   include/linux/dqblk_v2.h \
@@ -566,6 +446,7 @@ deps_lib/decompress_unxz.o := \
   include/linux/kasan.h \
     $(wildcard include/config/kasan.h) \
     $(wildcard include/config/kasan/shadow/offset.h) \
+  include/linux/vmalloc.h \
   include/linux/xz.h \
 
 lib/decompress_unxz.o: $(deps_lib/decompress_unxz.o)

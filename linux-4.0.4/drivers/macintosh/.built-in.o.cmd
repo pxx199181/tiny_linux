@@ -1,1 +1,1 @@
-cmd_drivers/macintosh/built-in.o :=  ld -m elf_x86_64   -r -o drivers/macintosh/built-in.o drivers/macintosh/mac_hid.o 
+cmd_drivers/macintosh/built-in.o :=  rm -f drivers/macintosh/built-in.o; ar rcsD drivers/macintosh/built-in.o

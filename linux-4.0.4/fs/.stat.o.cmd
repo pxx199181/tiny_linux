@@ -1,4 +1,4 @@
-cmd_fs/stat.o := gcc -Wp,-MD,fs/.stat.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.9/include -I./arch/x86/include -Iarch/x86/include/generated/uapi -Iarch/x86/include/generated  -Iinclude -I./arch/x86/include/uapi -Iarch/x86/include/generated/uapi -I./include/uapi -Iinclude/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -std=gnu89 -m64 -mno-80387 -mno-fp-ret-in-387 -mtune=generic -mno-red-zone -mcmodel=kernel -funit-at-a-time -maccumulate-outgoing-args -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -DCONFIG_AS_FXSAVEQ=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_CRC32=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -pipe -Wno-sign-compare -fno-asynchronous-unwind-tables -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -fno-delete-null-pointer-checks -Os -Wno-maybe-uninitialized --param=allow-store-data-races=0 -Wframe-larger-than=2048 -fno-stack-protector -Wno-unused-but-set-variable -fno-omit-frame-pointer -fno-optimize-sibling-calls -fno-var-tracking-assignments -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -Werror=date-time -DCC_HAVE_ASM_GOTO    -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(stat)"  -D"KBUILD_MODNAME=KBUILD_STR(stat)" -c -o fs/stat.o fs/stat.c
+cmd_fs/stat.o := gcc -Wp,-MD,fs/.stat.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.9/include -I./arch/x86/include -Iarch/x86/include/generated/uapi -Iarch/x86/include/generated  -Iinclude -I./arch/x86/include/uapi -Iarch/x86/include/generated/uapi -I./include/uapi -Iinclude/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -std=gnu89 -m32 -msoft-float -mregparm=3 -freg-struct-return -fno-pic -mpreferred-stack-boundary=2 -march=i686 -Wa,-mtune=generic32 -ffreestanding -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_CRC32=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -pipe -Wno-sign-compare -fno-asynchronous-unwind-tables -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -fno-delete-null-pointer-checks -Os -Wno-maybe-uninitialized --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fno-stack-protector -Wno-unused-but-set-variable -fomit-frame-pointer -fno-var-tracking-assignments -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -Werror=date-time -DCC_HAVE_ASM_GOTO    -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(stat)"  -D"KBUILD_MODNAME=KBUILD_STR(stat)" -c -o fs/stat.o fs/stat.c
 
 source_fs/stat.o := fs/stat.c
 
@@ -109,7 +109,7 @@ deps_fs/stat.o := \
   include/uapi/linux/stddef.h \
   arch/x86/include/asm/posix_types.h \
     $(wildcard include/config/x86/32.h) \
-  arch/x86/include/uapi/asm/posix_types_64.h \
+  arch/x86/include/uapi/asm/posix_types_32.h \
   include/uapi/asm-generic/posix_types.h \
   arch/x86/include/asm/linkage.h \
     $(wildcard include/config/x86/64.h) \
@@ -144,17 +144,14 @@ deps_fs/stat.o := \
   arch/x86/include/asm/segment.h \
     $(wildcard include/config/cc/stackprotector.h) \
     $(wildcard include/config/x86/32/lazy/gs.h) \
-  arch/x86/include/asm/cache.h \
-    $(wildcard include/config/x86/l1/cache/shift.h) \
-    $(wildcard include/config/x86/internode/cache/shift.h) \
-    $(wildcard include/config/x86/vsmp.h) \
   arch/x86/include/asm/page_types.h \
     $(wildcard include/config/physical/start.h) \
     $(wildcard include/config/physical/align.h) \
-  arch/x86/include/asm/page_64_types.h \
-    $(wildcard include/config/kasan.h) \
-    $(wildcard include/config/randomize/base.h) \
-    $(wildcard include/config/randomize/base/max/offset.h) \
+  arch/x86/include/asm/page_32_types.h \
+    $(wildcard include/config/highmem4g.h) \
+    $(wildcard include/config/highmem64g.h) \
+    $(wildcard include/config/page/offset.h) \
+    $(wildcard include/config/x86/pae.h) \
   arch/x86/include/uapi/asm/ptrace.h \
   arch/x86/include/uapi/asm/ptrace-abi.h \
   arch/x86/include/asm/processor-flags.h \
@@ -167,7 +164,6 @@ deps_fs/stat.o := \
   arch/x86/include/asm/required-features.h \
     $(wildcard include/config/x86/minimum/cpu/family.h) \
     $(wildcard include/config/math/emulation.h) \
-    $(wildcard include/config/x86/pae.h) \
     $(wildcard include/config/x86/cmpxchg64.h) \
     $(wildcard include/config/x86/use/3dnow.h) \
     $(wildcard include/config/x86/p6/nop.h) \
@@ -179,6 +175,7 @@ deps_fs/stat.o := \
     $(wildcard include/config/x86/ppro/fence.h) \
   arch/x86/include/asm/nops.h \
     $(wildcard include/config/mk7.h) \
+  include/asm-generic/bitops/fls64.h \
   include/asm-generic/bitops/find.h \
     $(wildcard include/config/generic/find/first/bit.h) \
   include/asm-generic/bitops/sched.h \
@@ -209,12 +206,16 @@ deps_fs/stat.o := \
     $(wildcard include/config/arch/has/cache/line/size.h) \
   include/uapi/linux/kernel.h \
   include/uapi/linux/sysinfo.h \
+  arch/x86/include/asm/cache.h \
+    $(wildcard include/config/x86/l1/cache/shift.h) \
+    $(wildcard include/config/x86/internode/cache/shift.h) \
+    $(wildcard include/config/x86/vsmp.h) \
   include/linux/dynamic_debug.h \
   include/linux/string.h \
     $(wildcard include/config/binary/printf.h) \
   include/uapi/linux/string.h \
   arch/x86/include/asm/string.h \
-  arch/x86/include/asm/string_64.h \
+  arch/x86/include/asm/string_32.h \
     $(wildcard include/config/kmemcheck.h) \
   arch/x86/include/asm/preempt.h \
   arch/x86/include/asm/percpu.h \
@@ -239,8 +240,8 @@ deps_fs/stat.o := \
   arch/x86/include/asm/thread_info.h \
     $(wildcard include/config/ia32/emulation.h) \
   arch/x86/include/asm/page.h \
-  arch/x86/include/asm/page_64.h \
-    $(wildcard include/config/x86/vsyscall/emulation.h) \
+  arch/x86/include/asm/page_32.h \
+    $(wildcard include/config/x86/3dnow.h) \
   include/linux/range.h \
   include/asm-generic/memory_model.h \
   include/asm-generic/getorder.h \
@@ -254,8 +255,10 @@ deps_fs/stat.o := \
   arch/x86/include/uapi/asm/sigcontext.h \
   arch/x86/include/asm/current.h \
   arch/x86/include/asm/pgtable_types.h \
-  arch/x86/include/asm/pgtable_64_types.h \
-  arch/x86/include/asm/sparsemem.h \
+  arch/x86/include/asm/pgtable_32_types.h \
+  arch/x86/include/asm/pgtable-2level_types.h \
+  include/asm-generic/pgtable-nopud.h \
+  include/asm-generic/pgtable-nopmd.h \
   arch/x86/include/asm/msr.h \
   arch/x86/include/uapi/asm/msr.h \
   arch/x86/include/uapi/asm/msr-index.h \
@@ -277,7 +280,6 @@ deps_fs/stat.o := \
   include/linux/math64.h \
     $(wildcard include/config/arch/supports/int128.h) \
   arch/x86/include/asm/div64.h \
-  include/asm-generic/div64.h \
   include/linux/err.h \
   include/linux/irqflags.h \
     $(wildcard include/config/trace/irqflags.h) \
@@ -289,8 +291,8 @@ deps_fs/stat.o := \
     $(wildcard include/config/generic/atomic64.h) \
   arch/x86/include/asm/atomic.h \
   arch/x86/include/asm/cmpxchg.h \
-  arch/x86/include/asm/cmpxchg_64.h \
-  arch/x86/include/asm/atomic64_64.h \
+  arch/x86/include/asm/cmpxchg_32.h \
+  arch/x86/include/asm/atomic64_32.h \
   include/asm-generic/atomic-long.h \
   include/linux/bottom_half.h \
   include/linux/preempt_mask.h \
@@ -433,7 +435,57 @@ deps_fs/stat.o := \
   arch/x86/include/uapi/asm/ist.h \
   include/video/edid.h \
   include/uapi/video/edid.h \
-  arch/x86/include/asm/pgtable_64.h \
+  arch/x86/include/asm/pgtable_32.h \
+    $(wildcard include/config/highpte.h) \
+  arch/x86/include/asm/fixmap.h \
+    $(wildcard include/config/x86/vsyscall/emulation.h) \
+    $(wildcard include/config/paravirt/clock.h) \
+    $(wildcard include/config/provide/ohci1394/dma/init.h) \
+    $(wildcard include/config/x86/local/apic.h) \
+    $(wildcard include/config/x86/io/apic.h) \
+    $(wildcard include/config/pci/mmconfig.h) \
+    $(wildcard include/config/x86/intel/mid.h) \
+  arch/x86/include/asm/acpi.h \
+    $(wildcard include/config/acpi.h) \
+    $(wildcard include/config/acpi/numa.h) \
+  include/acpi/pdc_intel.h \
+  arch/x86/include/asm/numa.h \
+    $(wildcard include/config/numa/emu.h) \
+  arch/x86/include/asm/apicdef.h \
+  arch/x86/include/asm/numa_32.h \
+  arch/x86/include/asm/mpspec.h \
+    $(wildcard include/config/eisa.h) \
+    $(wildcard include/config/x86/mpparse.h) \
+  arch/x86/include/asm/mpspec_def.h \
+  arch/x86/include/asm/realmode.h \
+    $(wildcard include/config/acpi/sleep.h) \
+  arch/x86/include/asm/io.h \
+    $(wildcard include/config/mtrr.h) \
+  arch/x86/include/generated/asm/early_ioremap.h \
+  include/asm-generic/early_ioremap.h \
+    $(wildcard include/config/generic/early/ioremap.h) \
+  include/asm-generic/iomap.h \
+    $(wildcard include/config/has/ioport/map.h) \
+    $(wildcard include/config/pci.h) \
+    $(wildcard include/config/generic/iomap.h) \
+  include/asm-generic/pci_iomap.h \
+    $(wildcard include/config/no/generic/pci/ioport/map.h) \
+    $(wildcard include/config/generic/pci/iomap.h) \
+  include/linux/vmalloc.h \
+  arch/x86/include/asm/pvclock.h \
+  include/linux/clocksource.h \
+    $(wildcard include/config/arch/clocksource/data.h) \
+    $(wildcard include/config/clocksource/watchdog.h) \
+    $(wildcard include/config/clksrc/of.h) \
+  arch/x86/include/asm/clocksource.h \
+  arch/x86/include/asm/pvclock-abi.h \
+  arch/x86/include/asm/kmap_types.h \
+    $(wildcard include/config/debug/highmem.h) \
+  include/asm-generic/kmap_types.h \
+  include/asm-generic/fixmap.h \
+  arch/x86/include/asm/paravirt.h \
+    $(wildcard include/config/paravirt/spinlocks.h) \
+  arch/x86/include/asm/pgtable-2level.h \
   include/asm-generic/pgtable.h \
   include/linux/page-flags.h \
     $(wildcard include/config/pageflags/extended.h) \
@@ -528,6 +580,7 @@ deps_fs/stat.o := \
   include/linux/kmemleak.h \
     $(wildcard include/config/debug/kmemleak.h) \
   include/linux/kasan.h \
+    $(wildcard include/config/kasan.h) \
     $(wildcard include/config/kasan/shadow/offset.h) \
   include/linux/syscalls.h \
     $(wildcard include/config/ftrace/syscalls.h) \
@@ -558,8 +611,7 @@ deps_fs/stat.o := \
   arch/x86/include/asm/unistd.h \
     $(wildcard include/config/x86/x32/abi.h) \
   arch/x86/include/uapi/asm/unistd.h \
-  arch/x86/include/generated/uapi/asm/unistd_64.h \
-  arch/x86/include/generated/asm/unistd_64_x32.h \
+  arch/x86/include/generated/uapi/asm/unistd_32.h \
   include/trace/syscall.h \
     $(wildcard include/config/tracepoints.h) \
     $(wildcard include/config/have/syscall/tracepoints.h) \
@@ -579,7 +631,7 @@ deps_fs/stat.o := \
     $(wildcard include/config/debug/strict/user/copy/checks.h) \
   arch/x86/include/asm/smap.h \
     $(wildcard include/config/x86/smap.h) \
-  arch/x86/include/asm/uaccess_64.h \
+  arch/x86/include/asm/uaccess_32.h \
   include/uapi/linux/poll.h \
   arch/x86/include/uapi/asm/poll.h \
   include/uapi/asm-generic/poll.h \
@@ -595,7 +647,6 @@ deps_fs/stat.o := \
     $(wildcard include/config/irq/time/accounting.h) \
   include/linux/context_tracking_state.h \
   arch/x86/include/asm/hardirq.h \
-    $(wildcard include/config/x86/local/apic.h) \
     $(wildcard include/config/have/kvm.h) \
     $(wildcard include/config/x86/thermal/vector.h) \
     $(wildcard include/config/x86/mce/threshold.h) \
@@ -611,23 +662,8 @@ deps_fs/stat.o := \
   include/linux/irqnr.h \
   include/uapi/linux/irqnr.h \
   include/linux/io.h \
-    $(wildcard include/config/has/ioport/map.h) \
-  arch/x86/include/asm/io.h \
-    $(wildcard include/config/mtrr.h) \
-  arch/x86/include/generated/asm/early_ioremap.h \
-  include/asm-generic/early_ioremap.h \
-    $(wildcard include/config/generic/early/ioremap.h) \
-  include/asm-generic/iomap.h \
-    $(wildcard include/config/pci.h) \
-    $(wildcard include/config/generic/iomap.h) \
-  include/asm-generic/pci_iomap.h \
-    $(wildcard include/config/no/generic/pci/ioport/map.h) \
-    $(wildcard include/config/generic/pci/iomap.h) \
-  include/linux/vmalloc.h \
   arch/x86/include/asm/irq.h \
-  arch/x86/include/asm/apicdef.h \
   arch/x86/include/asm/irq_vectors.h \
-    $(wildcard include/config/x86/io/apic.h) \
   arch/x86/include/asm/irq_regs.h \
   include/linux/irqdesc.h \
     $(wildcard include/config/irq/preflow/fasteoi.h) \
@@ -704,10 +740,6 @@ deps_fs/stat.o := \
     $(wildcard include/config/have/arch/seccomp/filter.h) \
     $(wildcard include/config/seccomp/filter.h) \
   include/uapi/linux/seccomp.h \
-  arch/x86/include/asm/seccomp.h \
-  arch/x86/include/asm/seccomp_64.h \
-  arch/x86/include/asm/ia32_unistd.h \
-  arch/x86/include/generated/asm/unistd_32_ia32.h \
   include/linux/rtmutex.h \
     $(wildcard include/config/debug/rt/mutexes.h) \
   include/linux/hrtimer.h \
@@ -730,7 +762,6 @@ deps_fs/stat.o := \
   include/uapi/linux/ptrace.h \
   arch/x86/include/asm/local64.h \
   include/asm-generic/local64.h \
-  arch/x86/include/asm/local.h \
   arch/x86/include/asm/hw_breakpoint.h \
   arch/x86/include/uapi/asm/hw_breakpoint.h \
   include/linux/kdebug.h \
@@ -751,7 +782,6 @@ deps_fs/stat.o := \
     $(wildcard include/config/memory/hotplug/sparse.h) \
   include/linux/device.h \
     $(wildcard include/config/debug/devres.h) \
-    $(wildcard include/config/acpi.h) \
     $(wildcard include/config/pinctrl.h) \
     $(wildcard include/config/dma/cma.h) \
     $(wildcard include/config/devtmpfs.h) \
@@ -784,14 +814,17 @@ deps_fs/stat.o := \
   include/linux/perf_regs.h \
     $(wildcard include/config/have/perf/regs.h) \
   arch/x86/include/uapi/asm/perf_regs.h \
+  arch/x86/include/asm/local.h \
   include/linux/pagemap.h \
   include/linux/highmem.h \
-    $(wildcard include/config/debug/highmem.h) \
   arch/x86/include/asm/cacheflush.h \
     $(wildcard include/config/debug/rodata/test.h) \
   include/asm-generic/cacheflush.h \
-  arch/x86/include/asm/kmap_types.h \
-  include/asm-generic/kmap_types.h \
+  arch/x86/include/asm/highmem.h \
+  include/linux/interrupt.h \
+    $(wildcard include/config/irq/forced/threading.h) \
+    $(wildcard include/config/generic/irq/probe.h) \
+  arch/x86/include/asm/tlbflush.h \
   include/linux/hugetlb_inline.h \
 
 fs/stat.o: $(deps_fs/stat.o)

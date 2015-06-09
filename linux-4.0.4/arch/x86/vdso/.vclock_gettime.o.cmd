@@ -349,127 +349,6 @@ deps_arch/x86/vdso/vclock_gettime.o := \
   include/linux/workqueue.h \
     $(wildcard include/config/debug/objects/work.h) \
     $(wildcard include/config/freezer.h) \
-  include/linux/interrupt.h \
-    $(wildcard include/config/irq/forced/threading.h) \
-    $(wildcard include/config/generic/irq/probe.h) \
-  include/linux/irqreturn.h \
-  include/linux/irqnr.h \
-  include/uapi/linux/irqnr.h \
-  include/linux/hardirq.h \
-  include/linux/ftrace_irq.h \
-    $(wildcard include/config/ftrace/nmi/enter.h) \
-  include/linux/vtime.h \
-    $(wildcard include/config/virt/cpu/accounting/native.h) \
-    $(wildcard include/config/virt/cpu/accounting/gen.h) \
-    $(wildcard include/config/virt/cpu/accounting.h) \
-    $(wildcard include/config/irq/time/accounting.h) \
-  include/linux/context_tracking_state.h \
-  include/linux/percpu.h \
-    $(wildcard include/config/need/per/cpu/embed/first/chunk.h) \
-    $(wildcard include/config/need/per/cpu/page/first/chunk.h) \
-  include/linux/mmdebug.h \
-    $(wildcard include/config/debug/vm.h) \
-  include/linux/smp.h \
-    $(wildcard include/config/up/late/init.h) \
-  include/linux/llist.h \
-    $(wildcard include/config/arch/have/nmi/safe/cmpxchg.h) \
-  include/linux/pfn.h \
-  include/linux/static_key.h \
-  include/linux/jump_label.h \
-    $(wildcard include/config/jump/label.h) \
-  arch/x86/include/asm/hardirq.h \
-    $(wildcard include/config/x86/local/apic.h) \
-    $(wildcard include/config/have/kvm.h) \
-    $(wildcard include/config/x86/thermal/vector.h) \
-    $(wildcard include/config/x86/mce/threshold.h) \
-    $(wildcard include/config/hyperv.h) \
-  include/linux/irq.h \
-    $(wildcard include/config/irq/domain/hierarchy.h) \
-    $(wildcard include/config/generic/pending/irq.h) \
-    $(wildcard include/config/hardirqs/sw/resend.h) \
-    $(wildcard include/config/generic/irq/legacy/alloc/hwirq.h) \
-    $(wildcard include/config/generic/irq/legacy.h) \
-  include/linux/gfp.h \
-    $(wildcard include/config/numa.h) \
-    $(wildcard include/config/highmem.h) \
-    $(wildcard include/config/zone/dma.h) \
-    $(wildcard include/config/zone/dma32.h) \
-    $(wildcard include/config/pm/sleep.h) \
-    $(wildcard include/config/cma.h) \
-  include/linux/mmzone.h \
-    $(wildcard include/config/force/max/zoneorder.h) \
-    $(wildcard include/config/memory/isolation.h) \
-    $(wildcard include/config/memcg.h) \
-    $(wildcard include/config/memory/hotplug.h) \
-    $(wildcard include/config/compaction.h) \
-    $(wildcard include/config/have/memblock/node/map.h) \
-    $(wildcard include/config/flat/node/mem/map.h) \
-    $(wildcard include/config/page/extension.h) \
-    $(wildcard include/config/no/bootmem.h) \
-    $(wildcard include/config/numa/balancing.h) \
-    $(wildcard include/config/have/memory/present.h) \
-    $(wildcard include/config/have/memoryless/nodes.h) \
-    $(wildcard include/config/need/node/memmap/size.h) \
-    $(wildcard include/config/need/multiple/nodes.h) \
-    $(wildcard include/config/have/arch/early/pfn/to/nid.h) \
-    $(wildcard include/config/sparsemem/extreme.h) \
-    $(wildcard include/config/have/arch/pfn/valid.h) \
-    $(wildcard include/config/nodes/span/other/nodes.h) \
-    $(wildcard include/config/holes/in/zone.h) \
-    $(wildcard include/config/arch/has/holes/memorymodel.h) \
-  include/linux/numa.h \
-    $(wildcard include/config/nodes/shift.h) \
-  include/linux/nodemask.h \
-    $(wildcard include/config/movable/node.h) \
-  include/linux/pageblock-flags.h \
-    $(wildcard include/config/hugetlb/page.h) \
-    $(wildcard include/config/hugetlb/page/size/variable.h) \
-  include/linux/page-flags-layout.h \
-  include/generated/bounds.h \
-  include/linux/memory_hotplug.h \
-    $(wildcard include/config/memory/hotremove.h) \
-    $(wildcard include/config/have/arch/nodedata/extension.h) \
-    $(wildcard include/config/have/bootmem/info/node.h) \
-  include/linux/notifier.h \
-  include/linux/rwsem.h \
-    $(wildcard include/config/rwsem/spin/on/owner.h) \
-    $(wildcard include/config/rwsem/generic/spinlock.h) \
-  arch/x86/include/asm/rwsem.h \
-  include/linux/srcu.h \
-  include/linux/topology.h \
-    $(wildcard include/config/use/percpu/numa/node/id.h) \
-    $(wildcard include/config/sched/smt.h) \
-  arch/x86/include/asm/topology.h \
-    $(wildcard include/config/x86/ht.h) \
-  include/asm-generic/topology.h \
-  include/linux/irqhandler.h \
-  include/linux/io.h \
-  arch/x86/include/asm/irq.h \
-  arch/x86/include/asm/apicdef.h \
-  arch/x86/include/asm/irq_vectors.h \
-    $(wildcard include/config/x86/io/apic.h) \
-  arch/x86/include/asm/irq_regs.h \
-  include/linux/irqdesc.h \
-    $(wildcard include/config/irq/preflow/fasteoi.h) \
-    $(wildcard include/config/sparse/irq.h) \
-    $(wildcard include/config/handle/domain/irq.h) \
-  arch/x86/include/asm/hw_irq.h \
-    $(wildcard include/config/irq/remap.h) \
-  include/linux/profile.h \
-    $(wildcard include/config/profiling.h) \
-  arch/x86/include/asm/sections.h \
-    $(wildcard include/config/debug/rodata.h) \
-  include/asm-generic/sections.h \
-  arch/x86/include/asm/uaccess.h \
-    $(wildcard include/config/x86/intel/usercopy.h) \
-    $(wildcard include/config/debug/strict/user/copy/checks.h) \
-  arch/x86/include/asm/smap.h \
-    $(wildcard include/config/x86/smap.h) \
-  arch/x86/include/asm/uaccess_64.h \
-  include/linux/hrtimer.h \
-    $(wildcard include/config/high/res/timers.h) \
-    $(wildcard include/config/timerfd.h) \
-  include/linux/timerqueue.h \
   arch/x86/include/asm/vvar.h \
   arch/x86/include/asm/unistd.h \
     $(wildcard include/config/x86/x32/abi.h) \
@@ -480,6 +359,8 @@ deps_arch/x86/vdso/vclock_gettime.o := \
   arch/x86/include/uapi/asm/vsyscall.h \
   arch/x86/include/asm/fixmap.h \
     $(wildcard include/config/provide/ohci1394/dma/init.h) \
+    $(wildcard include/config/x86/local/apic.h) \
+    $(wildcard include/config/x86/io/apic.h) \
     $(wildcard include/config/pci/mmconfig.h) \
     $(wildcard include/config/x86/intel/mid.h) \
     $(wildcard include/config/intel/txt.h) \
@@ -488,7 +369,18 @@ deps_arch/x86/vdso/vclock_gettime.o := \
     $(wildcard include/config/acpi/numa.h) \
   include/acpi/pdc_intel.h \
   arch/x86/include/asm/numa.h \
+    $(wildcard include/config/numa.h) \
     $(wildcard include/config/numa/emu.h) \
+  include/linux/nodemask.h \
+    $(wildcard include/config/highmem.h) \
+    $(wildcard include/config/movable/node.h) \
+  include/linux/numa.h \
+    $(wildcard include/config/nodes/shift.h) \
+  arch/x86/include/asm/topology.h \
+    $(wildcard include/config/x86/ht.h) \
+  include/asm-generic/topology.h \
+    $(wildcard include/config/have/memoryless/nodes.h) \
+  arch/x86/include/asm/apicdef.h \
   arch/x86/include/asm/mmu.h \
   arch/x86/include/asm/mpspec.h \
     $(wildcard include/config/eisa.h) \
@@ -508,6 +400,7 @@ deps_arch/x86/vdso/vclock_gettime.o := \
     $(wildcard include/config/memtest.h) \
   arch/x86/include/uapi/asm/e820.h \
   include/linux/ioport.h \
+    $(wildcard include/config/memory/hotremove.h) \
   arch/x86/include/asm/ist.h \
   arch/x86/include/uapi/asm/ist.h \
   include/video/edid.h \

@@ -1,1 +1,1 @@
-cmd_drivers/i2c/busses/built-in.o :=  ld -m elf_x86_64   -r -o drivers/i2c/busses/built-in.o drivers/i2c/busses/i2c-i801.o 
+cmd_drivers/i2c/busses/built-in.o :=  rm -f drivers/i2c/busses/built-in.o; ar rcsD drivers/i2c/busses/built-in.o

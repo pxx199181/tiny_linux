@@ -1,1 +1,1 @@
-cmd_drivers/i2c/algos/built-in.o :=  ld -m elf_x86_64   -r -o drivers/i2c/algos/built-in.o drivers/i2c/algos/i2c-algo-bit.o 
+cmd_drivers/i2c/algos/built-in.o :=  rm -f drivers/i2c/algos/built-in.o; ar rcsD drivers/i2c/algos/built-in.o

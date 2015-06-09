@@ -1,1 +1,1 @@
-qemu-system-x86_64  -kernel linux-4.0.4/arch/x86_64/boot/bzImage  -initrd file_ram.cpio 
+qemu-system-i386  -kernel linux-4.0.4/arch/x86/boot/bzImage  -initrd file_ram.cpio 

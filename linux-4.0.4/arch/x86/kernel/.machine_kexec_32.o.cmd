@@ -298,51 +298,15 @@ deps_arch/x86/kernel/machine_kexec_32.o := \
   include/linux/bottom_half.h \
   include/linux/preempt_mask.h \
   include/linux/spinlock_types.h \
-  arch/x86/include/asm/spinlock_types.h \
-    $(wildcard include/config/paravirt/spinlocks.h) \
-  include/asm-generic/qrwlock_types.h \
+  include/linux/spinlock_types_up.h \
   include/linux/lockdep.h \
     $(wildcard include/config/lockdep.h) \
     $(wildcard include/config/lock/stat.h) \
     $(wildcard include/config/prove/rcu.h) \
   include/linux/rwlock_types.h \
-  arch/x86/include/asm/spinlock.h \
-  include/linux/jump_label.h \
-    $(wildcard include/config/jump/label.h) \
-  arch/x86/include/asm/paravirt.h \
-  arch/x86/include/asm/qrwlock.h \
-  include/asm-generic/qrwlock.h \
+  include/linux/spinlock_up.h \
   include/linux/rwlock.h \
-  include/linux/spinlock_api_smp.h \
-    $(wildcard include/config/inline/spin/lock.h) \
-    $(wildcard include/config/inline/spin/lock/bh.h) \
-    $(wildcard include/config/inline/spin/lock/irq.h) \
-    $(wildcard include/config/inline/spin/lock/irqsave.h) \
-    $(wildcard include/config/inline/spin/trylock.h) \
-    $(wildcard include/config/inline/spin/trylock/bh.h) \
-    $(wildcard include/config/uninline/spin/unlock.h) \
-    $(wildcard include/config/inline/spin/unlock/bh.h) \
-    $(wildcard include/config/inline/spin/unlock/irq.h) \
-    $(wildcard include/config/inline/spin/unlock/irqrestore.h) \
-  include/linux/rwlock_api_smp.h \
-    $(wildcard include/config/inline/read/lock.h) \
-    $(wildcard include/config/inline/write/lock.h) \
-    $(wildcard include/config/inline/read/lock/bh.h) \
-    $(wildcard include/config/inline/write/lock/bh.h) \
-    $(wildcard include/config/inline/read/lock/irq.h) \
-    $(wildcard include/config/inline/write/lock/irq.h) \
-    $(wildcard include/config/inline/read/lock/irqsave.h) \
-    $(wildcard include/config/inline/write/lock/irqsave.h) \
-    $(wildcard include/config/inline/read/trylock.h) \
-    $(wildcard include/config/inline/write/trylock.h) \
-    $(wildcard include/config/inline/read/unlock.h) \
-    $(wildcard include/config/inline/write/unlock.h) \
-    $(wildcard include/config/inline/read/unlock/bh.h) \
-    $(wildcard include/config/inline/write/unlock/bh.h) \
-    $(wildcard include/config/inline/read/unlock/irq.h) \
-    $(wildcard include/config/inline/write/unlock/irq.h) \
-    $(wildcard include/config/inline/read/unlock/irqrestore.h) \
-    $(wildcard include/config/inline/write/unlock/irqrestore.h) \
+  include/linux/spinlock_api_up.h \
   include/linux/wait.h \
   include/uapi/linux/wait.h \
   include/linux/numa.h \
@@ -386,7 +350,7 @@ deps_arch/x86/kernel/machine_kexec_32.o := \
   include/linux/debugobjects.h \
     $(wildcard include/config/debug/objects.h) \
     $(wildcard include/config/debug/objects/free.h) \
-  include/linux/rcutree.h \
+  include/linux/rcutiny.h \
   include/linux/workqueue.h \
     $(wildcard include/config/debug/objects/work.h) \
     $(wildcard include/config/freezer.h) \
@@ -418,14 +382,49 @@ deps_arch/x86/kernel/machine_kexec_32.o := \
     $(wildcard include/config/up/late/init.h) \
   include/linux/llist.h \
     $(wildcard include/config/arch/have/nmi/safe/cmpxchg.h) \
-  arch/x86/include/asm/smp.h \
-    $(wildcard include/config/x86/local/apic.h) \
-    $(wildcard include/config/x86/32/smp.h) \
-    $(wildcard include/config/debug/nmi/selftest.h) \
-  arch/x86/include/asm/mpspec.h \
-    $(wildcard include/config/eisa.h) \
-    $(wildcard include/config/x86/mpparse.h) \
-  arch/x86/include/asm/mpspec_def.h \
+  include/linux/percpu.h \
+    $(wildcard include/config/need/per/cpu/embed/first/chunk.h) \
+    $(wildcard include/config/need/per/cpu/page/first/chunk.h) \
+  include/linux/pfn.h \
+  arch/x86/include/asm/topology.h \
+    $(wildcard include/config/x86/ht.h) \
+  include/asm-generic/topology.h \
+  include/linux/rbtree.h \
+  include/linux/debug_locks.h \
+    $(wildcard include/config/debug/locking/api/selftests.h) \
+  include/linux/mm_types.h \
+    $(wildcard include/config/split/ptlock/cpus.h) \
+    $(wildcard include/config/arch/enable/split/pmd/ptlock.h) \
+    $(wildcard include/config/have/cmpxchg/double.h) \
+    $(wildcard include/config/have/aligned/struct/page.h) \
+    $(wildcard include/config/aio.h) \
+    $(wildcard include/config/mmu/notifier.h) \
+  include/linux/auxvec.h \
+  include/uapi/linux/auxvec.h \
+  arch/x86/include/uapi/asm/auxvec.h \
+  include/linux/uprobes.h \
+    $(wildcard include/config/uprobes.h) \
+  arch/x86/include/asm/mmu.h \
+  include/linux/bit_spinlock.h \
+  include/linux/shrinker.h \
+  include/linux/resource.h \
+  include/uapi/linux/resource.h \
+  arch/x86/include/uapi/asm/resource.h \
+  include/asm-generic/resource.h \
+  include/uapi/asm-generic/resource.h \
+  include/linux/page_ext.h \
+    $(wildcard include/config/page/owner.h) \
+  include/linux/stacktrace.h \
+    $(wildcard include/config/stacktrace.h) \
+    $(wildcard include/config/user/stacktrace/support.h) \
+  arch/x86/include/asm/pgtable.h \
+    $(wildcard include/config/have/arch/soft/dirty.h) \
+  arch/x86/include/asm/e820.h \
+    $(wildcard include/config/efi.h) \
+    $(wildcard include/config/memtest.h) \
+  arch/x86/include/uapi/asm/e820.h \
+    $(wildcard include/config/intel/txt.h) \
+  include/linux/ioport.h \
   arch/x86/include/asm/x86_init.h \
   arch/x86/include/uapi/asm/bootparam.h \
   include/linux/screen_info.h \
@@ -434,28 +433,17 @@ deps_arch/x86/kernel/machine_kexec_32.o := \
   include/uapi/linux/apm_bios.h \
   include/linux/edd.h \
   include/uapi/linux/edd.h \
-  arch/x86/include/asm/e820.h \
-    $(wildcard include/config/efi.h) \
-    $(wildcard include/config/memtest.h) \
-  arch/x86/include/uapi/asm/e820.h \
-    $(wildcard include/config/intel/txt.h) \
-  include/linux/ioport.h \
   arch/x86/include/asm/ist.h \
   arch/x86/include/uapi/asm/ist.h \
   include/video/edid.h \
   include/uapi/video/edid.h \
-  arch/x86/include/asm/apicdef.h \
-  arch/x86/include/asm/apic.h \
-    $(wildcard include/config/x86/x2apic.h) \
-  include/linux/pm.h \
-    $(wildcard include/config/vt/console/sleep.h) \
-    $(wildcard include/config/pm.h) \
-    $(wildcard include/config/pm/clk.h) \
-    $(wildcard include/config/pm/generic/domains.h) \
+  arch/x86/include/asm/pgtable_32.h \
+    $(wildcard include/config/highpte.h) \
   arch/x86/include/asm/fixmap.h \
     $(wildcard include/config/x86/vsyscall/emulation.h) \
     $(wildcard include/config/paravirt/clock.h) \
     $(wildcard include/config/provide/ohci1394/dma/init.h) \
+    $(wildcard include/config/x86/local/apic.h) \
     $(wildcard include/config/pci/mmconfig.h) \
     $(wildcard include/config/x86/intel/mid.h) \
   arch/x86/include/asm/acpi.h \
@@ -464,11 +452,12 @@ deps_arch/x86/kernel/machine_kexec_32.o := \
   include/acpi/pdc_intel.h \
   arch/x86/include/asm/numa.h \
     $(wildcard include/config/numa/emu.h) \
-  arch/x86/include/asm/topology.h \
-    $(wildcard include/config/x86/ht.h) \
-  include/asm-generic/topology.h \
+  arch/x86/include/asm/apicdef.h \
   arch/x86/include/asm/numa_32.h \
-  arch/x86/include/asm/mmu.h \
+  arch/x86/include/asm/mpspec.h \
+    $(wildcard include/config/eisa.h) \
+    $(wildcard include/config/x86/mpparse.h) \
+  arch/x86/include/asm/mpspec_def.h \
   arch/x86/include/asm/realmode.h \
     $(wildcard include/config/acpi/sleep.h) \
   arch/x86/include/asm/io.h \
@@ -484,7 +473,6 @@ deps_arch/x86/kernel/machine_kexec_32.o := \
     $(wildcard include/config/no/generic/pci/ioport/map.h) \
     $(wildcard include/config/generic/pci/iomap.h) \
   include/linux/vmalloc.h \
-  include/linux/rbtree.h \
   arch/x86/include/asm/pvclock.h \
   include/linux/clocksource.h \
     $(wildcard include/config/arch/clocksource/data.h) \
@@ -496,44 +484,8 @@ deps_arch/x86/kernel/machine_kexec_32.o := \
     $(wildcard include/config/debug/highmem.h) \
   include/asm-generic/kmap_types.h \
   include/asm-generic/fixmap.h \
-  arch/x86/include/asm/idle.h \
-  arch/x86/include/asm/io_apic.h \
-  arch/x86/include/asm/irq_vectors.h \
-    $(wildcard include/config/have/kvm.h) \
-  include/linux/percpu.h \
-    $(wildcard include/config/need/per/cpu/embed/first/chunk.h) \
-    $(wildcard include/config/need/per/cpu/page/first/chunk.h) \
-  include/linux/pfn.h \
-  include/linux/debug_locks.h \
-    $(wildcard include/config/debug/locking/api/selftests.h) \
-  include/linux/mm_types.h \
-    $(wildcard include/config/split/ptlock/cpus.h) \
-    $(wildcard include/config/arch/enable/split/pmd/ptlock.h) \
-    $(wildcard include/config/have/cmpxchg/double.h) \
-    $(wildcard include/config/have/aligned/struct/page.h) \
-    $(wildcard include/config/aio.h) \
-    $(wildcard include/config/mmu/notifier.h) \
-  include/linux/auxvec.h \
-  include/uapi/linux/auxvec.h \
-  arch/x86/include/uapi/asm/auxvec.h \
-  include/linux/uprobes.h \
-    $(wildcard include/config/uprobes.h) \
-  include/linux/bit_spinlock.h \
-  include/linux/shrinker.h \
-  include/linux/resource.h \
-  include/uapi/linux/resource.h \
-  arch/x86/include/uapi/asm/resource.h \
-  include/asm-generic/resource.h \
-  include/uapi/asm-generic/resource.h \
-  include/linux/page_ext.h \
-    $(wildcard include/config/page/owner.h) \
-  include/linux/stacktrace.h \
-    $(wildcard include/config/stacktrace.h) \
-    $(wildcard include/config/user/stacktrace/support.h) \
-  arch/x86/include/asm/pgtable.h \
-    $(wildcard include/config/have/arch/soft/dirty.h) \
-  arch/x86/include/asm/pgtable_32.h \
-    $(wildcard include/config/highpte.h) \
+  arch/x86/include/asm/paravirt.h \
+    $(wildcard include/config/paravirt/spinlocks.h) \
   arch/x86/include/asm/pgtable-2level.h \
   include/asm-generic/pgtable.h \
   include/linux/page-flags.h \
@@ -755,6 +707,8 @@ deps_arch/x86/kernel/machine_kexec_32.o := \
   include/linux/moduleparam.h \
     $(wildcard include/config/alpha.h) \
     $(wildcard include/config/ppc64.h) \
+  include/linux/jump_label.h \
+    $(wildcard include/config/jump/label.h) \
   arch/x86/include/asm/module.h \
     $(wildcard include/config/m586.h) \
     $(wildcard include/config/m586tsc.h) \
@@ -798,6 +752,7 @@ deps_arch/x86/kernel/machine_kexec_32.o := \
   arch/x86/include/asm/ftrace.h \
   include/linux/suspend.h \
     $(wildcard include/config/vt.h) \
+    $(wildcard include/config/vt/console/sleep.h) \
     $(wildcard include/config/suspend.h) \
     $(wildcard include/config/pm/sleep/debug.h) \
     $(wildcard include/config/pm/autosleep.h) \
@@ -828,6 +783,7 @@ deps_arch/x86/kernel/machine_kexec_32.o := \
   include/linux/context_tracking_state.h \
   include/linux/static_key.h \
   arch/x86/include/asm/hardirq.h \
+    $(wildcard include/config/have/kvm.h) \
     $(wildcard include/config/x86/thermal/vector.h) \
     $(wildcard include/config/x86/mce/threshold.h) \
     $(wildcard include/config/hyperv.h) \
@@ -843,6 +799,7 @@ deps_arch/x86/kernel/machine_kexec_32.o := \
   include/uapi/linux/irqnr.h \
   include/linux/io.h \
   arch/x86/include/asm/irq.h \
+  arch/x86/include/asm/irq_vectors.h \
   arch/x86/include/asm/irq_regs.h \
   include/linux/irqdesc.h \
     $(wildcard include/config/irq/preflow/fasteoi.h) \
@@ -871,6 +828,10 @@ deps_arch/x86/kernel/machine_kexec_32.o := \
     $(wildcard include/config/sysfs/deprecated.h) \
   include/linux/klist.h \
   include/linux/pinctrl/devinfo.h \
+    $(wildcard include/config/pm.h) \
+  include/linux/pm.h \
+    $(wildcard include/config/pm/clk.h) \
+    $(wildcard include/config/pm/generic/domains.h) \
   include/linux/ratelimit.h \
   arch/x86/include/asm/device.h \
     $(wildcard include/config/x86/dev/dma/ops.h) \
@@ -900,6 +861,13 @@ deps_arch/x86/kernel/machine_kexec_32.o := \
   arch/x86/include/asm/insn.h \
   arch/x86/include/asm/inat.h \
   arch/x86/include/asm/inat_types.h \
+  arch/x86/include/asm/apic.h \
+    $(wildcard include/config/x86/x2apic.h) \
+  arch/x86/include/asm/idle.h \
+  arch/x86/include/asm/smp.h \
+    $(wildcard include/config/x86/32/smp.h) \
+    $(wildcard include/config/debug/nmi/selftest.h) \
+  arch/x86/include/asm/io_apic.h \
   arch/x86/include/asm/debugreg.h \
     $(wildcard include/config/cpu/sup/amd.h) \
   arch/x86/include/uapi/asm/debugreg.h \

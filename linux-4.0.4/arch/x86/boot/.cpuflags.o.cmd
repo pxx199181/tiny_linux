@@ -34,7 +34,7 @@ deps_arch/x86/boot/cpuflags.o := \
     $(wildcard include/config/arch/use/builtin/bswap.h) \
   arch/x86/include/asm/posix_types.h \
     $(wildcard include/config/x86/32.h) \
-  arch/x86/include/uapi/asm/posix_types_64.h \
+  arch/x86/include/uapi/asm/posix_types_32.h \
   include/uapi/asm-generic/posix_types.h \
   arch/x86/boot/bitops.h \
   arch/x86/include/asm/processor-flags.h \

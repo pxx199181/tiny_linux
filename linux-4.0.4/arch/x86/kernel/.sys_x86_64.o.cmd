@@ -793,22 +793,6 @@ deps_arch/x86/kernel/sys_x86_64.o := \
   include/uapi/linux/elf-em.h \
   arch/x86/include/asm/ia32.h \
     $(wildcard include/config/ia32/support.h) \
-  include/linux/compat.h \
-    $(wildcard include/config/compat/old/sigaction.h) \
-  include/linux/socket.h \
-  arch/x86/include/uapi/asm/socket.h \
-  include/uapi/asm-generic/socket.h \
-  arch/x86/include/uapi/asm/sockios.h \
-  include/uapi/asm-generic/sockios.h \
-  include/uapi/linux/sockios.h \
-  include/linux/uio.h \
-  include/uapi/linux/uio.h \
-  include/uapi/linux/socket.h \
-  include/uapi/linux/if.h \
-  include/uapi/linux/hdlc/ioctl.h \
-  arch/x86/include/asm/compat.h \
-  arch/x86/include/asm/user32.h \
-  arch/x86/include/uapi/asm/sigcontext32.h \
   arch/x86/include/asm/syscalls.h \
 
 arch/x86/kernel/sys_x86_64.o: $(deps_arch/x86/kernel/sys_x86_64.o)
