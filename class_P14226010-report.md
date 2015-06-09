@@ -71,7 +71,7 @@ mount proc
 mount -o remount,rw /
 mount -a
 
-clear                               
+clear
 echo "Linux is Booting"
 
 
@@ -92,7 +92,7 @@ ip route add default via 10.0.2.2
             对configure和driver的部分我想不到更多的优化方法了，下一步只能进到源码里面去．
 
 ###４. 感受
-            配置选项实在太多了，配置挺费事， driver的部分找了一些零碎的参考（关于.ko的生成以及驱动的加载，试了试可以用）.
-		  文件夹下面， 保存了很多歌config文件，每步都是一个阶段．
+            配置挺费事， driver的部分找了一些零碎的参考（关于.ko的生成以及驱动的加载，试了试可以用）.
+		  文件夹下面， 保存了很多个config文件，每步都是一个阶段．
 
 		
