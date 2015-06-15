@@ -171,16 +171,14 @@ int main()
 }
 ```
 	   测试输出如下：
-	   	   [命令：]
-	   	   ![result-pi](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/normal-cmd.png)
-	   	   ![screenshots](https://raw.github.com/ButBueatiful/dotvim/master/screenshots/vim-screenshot.jpg)
-![screenshots](https://raw.github.com/ButBueatiful/dotvim/master/screenshots/vim-screenshot.jpg)
-	   	   [结果：]
-	   	   ![image](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/normal-result.png)
-	   	   [命令：]
-	   	   ![image](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/kernelmode-cmd.png)
-	   	   [结果：]
-	   	   ![image](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/kernelmode-result.png)
+[命令：]
+![result-pi](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/normal-cmd.png)
+[结果：]
+![image](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/normal-result.png)
+[命令：]
+![image](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/kernelmode-cmd.png)
+[结果：]
+![image](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/kernelmode-result.png)
 	   	   
 ###２. 出现的问题
             1). glibc的编译必须的找个和2.11非常接近的系统，否则gcc和gawk存在很多问题，哪怕解决了可能还存在一些奇奇怪怪
