@@ -4,6 +4,7 @@ source_arch/x86/kernel/process_32.o := arch/x86/kernel/process_32.c
 
 deps_arch/x86/kernel/process_32.o := \
     $(wildcard include/config/math/emulation.h) \
+    $(wildcard include/config/kernel/mode/linux.h) \
   include/linux/cpu.h \
     $(wildcard include/config/hotplug/cpu.h) \
     $(wildcard include/config/smp.h) \

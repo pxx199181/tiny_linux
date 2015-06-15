@@ -27,6 +27,7 @@ deps_arch/x86/lib/putuser.o := \
     $(wildcard include/config/as/cfi/signal/frame.h) \
     $(wildcard include/config/as/cfi/sections.h) \
   arch/x86/include/asm/thread_info.h \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/ia32/emulation.h) \
   arch/x86/include/asm/page.h \
   include/linux/types.h \

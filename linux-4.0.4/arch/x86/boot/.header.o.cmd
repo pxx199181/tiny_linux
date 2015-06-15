@@ -12,6 +12,7 @@ deps_arch/x86/boot/header.o := \
     $(wildcard include/config/efi.h) \
     $(wildcard include/config/kexec.h) \
   arch/x86/include/asm/segment.h \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/smp.h) \
     $(wildcard include/config/cc/stackprotector.h) \
     $(wildcard include/config/paravirt.h) \

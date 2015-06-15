@@ -5560,6 +5560,12 @@ L:	kernel-janitors@vger.kernel.org
 W:	http://kernelnewbies.org/KernelJanitors
 S:	Odd Fixes
 
+KERNEL MODE LINUX
+P:	Toshiyuki Maeda
+M:	tosh@is.s.u-tokyo.ac.jp
+W:	http://www.yl.is.s.u-tokyo.ac.jp/~tosh/kml/
+S:	Maintained
+
 KERNEL NFSD, SUNRPC, AND LOCKD SERVERS
 M:	"J. Bruce Fields" <bfields@fieldses.org>
 L:	linux-nfs@vger.kernel.org

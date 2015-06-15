@@ -5,6 +5,7 @@
  * This must come first.
  */
 #include "sigreturn.S"
+#include "kml.S"
 
 	.text
 	.globl __kernel_vsyscall

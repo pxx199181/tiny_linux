@@ -56,6 +56,7 @@ deps_arch/x86/vdso/vdso-image-32-int80.o := \
     $(wildcard include/config/page/offset.h) \
     $(wildcard include/config/x86/pae.h) \
   arch/x86/include/asm/vdso.h \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/x86/x32.h) \
     $(wildcard include/config/compat.h) \
   include/linux/init.h \

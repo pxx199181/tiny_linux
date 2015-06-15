@@ -130,4 +130,18 @@ do {									\
 
 #endif /* CONFIG_X86_32 */
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+
+/*
+ * The following code was moved from 'switch_to' for NMI safety.
+ *
+ */
+#define prepare_arch_switch(next)					\
+do {									\
+	struct task_struct* prev = current;				\
+	savesegment(gs, prev->thread.gs);				\
+} while (0)
+
+#endif
+
 #endif /* _ASM_X86_SWITCH_TO_H */

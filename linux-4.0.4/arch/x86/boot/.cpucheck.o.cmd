@@ -106,6 +106,7 @@ deps_arch/x86/boot/cpucheck.o := \
   arch/x86/boot/cpuflags.h \
   arch/x86/include/asm/cpufeature.h \
     $(wildcard include/config/x86/feature/names.h) \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/x86/debug/static/cpu/has.h) \
   arch/x86/include/asm/required-features.h \
     $(wildcard include/config/math/emulation.h) \

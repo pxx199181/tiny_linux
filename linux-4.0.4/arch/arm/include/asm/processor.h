@@ -23,6 +23,9 @@
 #include <asm/ptrace.h>
 #include <asm/types.h>
 #include <asm/unified.h>
+#ifdef CONFIG_KERNEL_MODE_LINUX
+#include <linux/thread_info.h>
+#endif
 
 #ifdef __KERNEL__
 #define STACK_TOP	((current->personality & ADDR_LIMIT_32BIT) ? \
@@ -53,6 +56,14 @@ struct thread_struct {
 #define nommu_start_thread(regs) regs->ARM_r10 = current->mm->start_data
 #endif
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+static inline void clear_thread_flag_ku(void) { clear_thread_flag(TIF_KU); }
+static inline void set_thread_flag_ku(void) { set_thread_flag(TIF_KU); }
+#else
+static inline void clear_thread_flag_ku(void) { return; }
+static inline void set_thread_flag_ku(void) { return; }
+#endif
+
 #define start_thread(regs,pc,sp)					\
 ({									\
 	memset(regs->uregs, 0, sizeof(regs->uregs));			\
@@ -66,7 +77,31 @@ struct thread_struct {
 	regs->ARM_pc = pc & ~1;		/* pc */			\
 	regs->ARM_sp = sp;		/* sp */			\
 	nommu_start_thread(regs);					\
+	clear_thread_flag_ku();						\
 })
+
+#ifdef CONFIG_KERNEL_MODE_LINUX
+#define start_kernel_thread(regs,pc,sp)					\
+({									\
+	unsigned long *stack = (unsigned long *)sp;			\
+	set_fs(KERNEL_DS);						\
+	memset(regs->uregs, 0, sizeof(regs->uregs));			\
+	if (current->personality & ADDR_LIMIT_32BIT)			\
+		regs->ARM_cpsr = SYSTEM_MODE;				\
+	else								\
+		regs->ARM_cpsr = USR26_MODE;				\
+	if (elf_hwcap & HWCAP_THUMB && pc & 1)				\
+		regs->ARM_cpsr |= PSR_T_BIT;				\
+	regs->ARM_cpsr |= PSR_ENDSTATE;					\
+	regs->ARM_pc = pc & ~1;		/* pc */			\
+	regs->ARM_sp = sp;		/* sp */			\
+	regs->ARM_r2 = stack[2];	/* r2 (envp) */			\
+	regs->ARM_r1 = stack[1];	/* r1 (argv) */			\
+	regs->ARM_r0 = stack[0];	/* r0 (argc) */			\
+	nommu_start_thread(regs);					\
+	set_thread_flag_ku();						\
+})
+#endif
 
 /* Forward declaration, a strange C thing */
 struct task_struct;

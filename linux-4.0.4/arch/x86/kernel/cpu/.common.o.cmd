@@ -6,6 +6,7 @@ deps_arch/x86/kernel/cpu/common.o := \
     $(wildcard include/config/x86/local/apic.h) \
     $(wildcard include/config/x86/64.h) \
     $(wildcard include/config/x86/32.h) \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/x86/smap.h) \
     $(wildcard include/config/x86/ht.h) \
     $(wildcard include/config/processor/select.h) \

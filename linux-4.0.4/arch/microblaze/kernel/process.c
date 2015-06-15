@@ -149,7 +149,22 @@ void start_thread(struct pt_regs *regs, unsigned long pc, unsigned long usp)
 	regs->msr |= MSR_UMS;
 	regs->msr &= ~MSR_VM;
 #endif
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	clear_thread_flag(TIF_KU);
+#endif
 }
+
+#ifdef CONFIG_KERNEL_MODE_LINUX
+void start_kernel_thread(struct pt_regs *regs, unsigned long pc, unsigned long usp)
+{
+	set_fs(KERNEL_DS);
+	regs->pc = pc;
+	regs->r1 = usp;
+	regs->pt_mode = 0;
+	regs->msr &= ~MSR_UMS;
+	set_thread_flag(TIF_KU);
+}
+#endif
 
 #ifdef CONFIG_MMU
 #include <linux/elfcore.h>

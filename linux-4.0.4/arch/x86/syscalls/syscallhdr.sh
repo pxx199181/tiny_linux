@@ -14,7 +14,7 @@ grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
     echo "#define ${fileguard} 1"
     echo ""
 
-    while read nr abi name entry ; do
+    while read nr abi name num_args req_ptregs entry ; do
 	if [ -z "$offset" ]; then
 	    echo "#define __NR_${prefix}${name} $nr"
 	else

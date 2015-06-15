@@ -18,6 +18,7 @@ deps_mm/memory.o := \
     $(wildcard include/config/have/ioremap/prot.h) \
     $(wildcard include/config/prove/locking.h) \
     $(wildcard include/config/debug/atomic/sleep.h) \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/transparent/hugepage.h) \
     $(wildcard include/config/hugetlbfs.h) \
   include/linux/kernel_stat.h \

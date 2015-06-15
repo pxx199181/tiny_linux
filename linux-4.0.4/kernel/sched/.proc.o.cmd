@@ -149,6 +149,7 @@ deps_kernel/sched/proc.o := \
   arch/x86/include/asm/ptrace.h \
     $(wildcard include/config/x86/debugctlmsr.h) \
   arch/x86/include/asm/segment.h \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/x86/32/lazy/gs.h) \
   include/uapi/linux/const.h \
   arch/x86/include/asm/page_types.h \

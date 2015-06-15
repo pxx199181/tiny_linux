@@ -4,6 +4,7 @@ source_arch/x86/kernel/signal.o := arch/x86/kernel/signal.c
 
 deps_arch/x86/kernel/signal.o := \
     $(wildcard include/config/x86/64.h) \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/x86/32.h) \
     $(wildcard include/config/x86/x32/abi.h) \
   include/linux/sched.h \

@@ -5,6 +5,7 @@
  * This must come first.
  */
 #include "sigreturn.S"
+#include "kml.S"
 
 /*
  * The caller puts arg2 in %ecx, which gets pushed. The kernel will use

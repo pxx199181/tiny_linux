@@ -74,7 +74,11 @@
  *  27 - per-cpu			[ offset to per-cpu data area ]
  *  28 - stack_canary-20		[ for stack protector ]
  *  29 - unused
+#ifndef CONFIG_KERNEL_MODE_LINUX
  *  30 - unused
+#else
+ *  30 - TSS for nmi handler
+#endif
  *  31 - TSS for double fault handler
  */
 #define GDT_ENTRY_TLS_MIN	6
@@ -113,7 +117,25 @@
 #define __KERNEL_STACK_CANARY		0
 #endif
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+#define GDT_ENTRY_NMI_TSS		30
+#define __NMI (GDT_ENTRY_NMI_TSS * 8)
+#endif
+
 #define GDT_ENTRY_DOUBLEFAULT_TSS	31
+#ifdef CONFIG_KERNEL_MODE_LINUX
+#define __DOUBLEFAULT_TSS (GDT_ENTRY_DOUBLEFAULT_TSS * 8)
+#endif
+
+#ifdef CONFIG_KERNEL_MODE_LINUX
+
+#define __KU_CS_INTERRUPT	((1 << 16) | __USER_CS)
+#define __KU_CS_EXCEPTION	((1 << 17) | __USER_CS)
+
+#define kernel_mode_user_process(cs) ((cs) & 0xffff0000)
+#define need_error_code_fix_on_page_fault(cs) ((cs) == __KU_CS_EXCEPTION)
+
+#endif
 
 /*
  * The GDT has 32 entries
@@ -163,6 +185,11 @@
 #define GDT_ENTRY_DEFAULT_USER_CS 6
 #define __USER32_CS   (GDT_ENTRY_DEFAULT_USER32_CS*8+3)
 #define __USER32_DS	__USER_DS
+
+#ifdef CONFIG_KERNEL_MODE_LINUX
+#define __KU_CS			(0x7fff0003 | __KERNEL_CS)
+#define need_error_code_fix_on_page_fault(cs) ((cs) & 0x03)
+#endif
 
 #define GDT_ENTRY_TSS 8	/* needs two entries */
 #define GDT_ENTRY_LDT 10 /* needs two entries */
@@ -226,6 +253,65 @@ do {									\
 									\
 		     : "+r" (__val) : : "memory");			\
 } while (0)
+
+#ifdef CONFIG_KERNEL_MODE_LINUX
+
+#define loadldtr(value)				\
+	asm volatile("\n"			\
+ 		"1:\t"				\
+		"lldt %0\n"			\
+		"2:\n"				\
+		".section .fixup,\"ax\"\n"	\
+		"3:\t"				\
+		"pushl $0\n\t"			\
+		"lldt (%%esp)\n\t"		\
+		"addl $4, %%esp\n\t"		\
+		"jmp 2b\n"			\
+		".previous\n"			\
+		".section __ex_table,\"a\"\n\t"	\
+		".align 4\n\t"			\
+		".long 1b,3b\n"			\
+		".previous"			\
+		: :"m" (*(unsigned int *)&(value)))
+
+#define saveldtr(value) \
+	asm volatile("sldt %0\n\t" : "=m" (*(int *)&(value)))
+
+#endif
+
+#if defined(CONFIG_KERNEL_MODE_LINUX) && defined(CONFIG_X86_32)
+
+#define NMI_DECLS_GS \
+	unsigned long system__saved_gs = 0;
+
+#define NMI_SAVE_GS \
+	savesegment(gs, system__saved_gs)
+
+#define NMI_RESTORE_GS \
+	loadsegment(gs, system__saved_gs)
+
+#define NMI_DECLS_GSLDTR \
+	NMI_DECLS_GS \
+	unsigned long system__saved_ldtr = 0;
+
+#define NMI_SAVE_GSLDTR \
+	NMI_SAVE_GS;	\
+	saveldtr(system__saved_ldtr)
+
+#define NMI_RESTORE_GSLDTR \
+	loadldtr(system__saved_ldtr);	\
+	NMI_RESTORE_GS
+
+#else
+
+#define NMI_DECLS_GS
+#define NMI_SAVE_GS
+#define NMI_RESTORE_GS
+#define NMI_DECLS_GSLDTR
+#define NMI_SAVE_GSLDTR
+#define NMI_RESTORE_GSLDTR
+
+#endif
 
 /*
  * Save a segment register away

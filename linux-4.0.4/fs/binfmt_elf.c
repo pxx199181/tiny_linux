@@ -9,6 +9,10 @@
  * Copyright 1993, 1994: Eric Youngdale (ericy@cais.com).
  */
 
+#if defined(CONFIG_KERNEL_MODE_LINUX) && defined(INCLUDED_FOR_COMPAT)
+#undef CONFIG_KERNEL_MODE_LINUX
+#endif
+
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/fs.h>
@@ -147,7 +151,11 @@ static int padzero(unsigned long elf_bss)
 
 static int
 create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
-		unsigned long load_addr, unsigned long interp_load_addr)
+		unsigned long load_addr, unsigned long interp_load_addr
+#ifdef CONFIG_KERNEL_MODE_LINUX
+		, int kernel_mode
+#endif
+)
 {
 	unsigned long p = bprm->p;
 	int argc = bprm->argc;
@@ -660,8 +668,45 @@ static unsigned long randomize_stack_top(unsigned long stack_top)
 #endif
 }
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+#include <linux/fs_struct.h>
+/*
+ * XXX : we haven't implemented safety check of user programs.
+ */
+#define TRUSTED_DIR_STR		"/trusted/"
+#define TRUSTED_DIR_STR_LEN	9
+
+static inline int is_safe(struct file* file)
+{
+	int ret;
+	char* path;
+	char* tmp;
+
+#ifdef CONFIG_KML_CHECK_CHROOT
+	if (current_chrooted()) {
+		return 0;
+	}
+#endif
+
+	tmp = (char*)__get_free_page(GFP_KERNEL);
+
+	if (!tmp) {
+		return 0;
+	}
+
+	path = d_path(&file->f_path, tmp, PAGE_SIZE);
+	ret = (0 == strncmp(TRUSTED_DIR_STR, path, TRUSTED_DIR_STR_LEN));
+
+        free_page((unsigned long)tmp);
+        return ret;
+}
+#endif
+
 static int load_elf_binary(struct linux_binprm *bprm)
 {
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	int kernel_mode = 0;
+#endif
 	struct file *interpreter = NULL; /* to shut gcc up */
  	unsigned long load_addr = 0, load_bias = 0;
 	int load_addr_set = 0;
@@ -1049,8 +1094,15 @@ static int load_elf_binary(struct linux_binprm *bprm)
 #endif /* ARCH_HAS_SETUP_ADDITIONAL_PAGES */
 
 	install_exec_creds(bprm);
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	kernel_mode = is_safe(bprm->file);
+#endif
 	retval = create_elf_tables(bprm, &loc->elf_ex,
-			  load_addr, interp_load_addr);
+			  load_addr, interp_load_addr
+#ifdef CONFIG_KERNEL_MODE_LINUX
+			  , kernel_mode
+#endif
+			  );
 	if (retval < 0)
 		goto out;
 	/* N.B. passed_fileno might not be initialized? */
@@ -1093,7 +1145,15 @@ static int load_elf_binary(struct linux_binprm *bprm)
 	ELF_PLAT_INIT(regs, reloc_func_desc);
 #endif
 
+#ifndef CONFIG_KERNEL_MODE_LINUX
 	start_thread(regs, elf_entry, bprm->p);
+#else
+	if (kernel_mode) {
+		start_kernel_thread(regs, elf_entry, bprm->p);
+	} else {
+		start_thread(regs, elf_entry, bprm->p);
+	}
+#endif
 	retval = 0;
 out:
 	kfree(loc);

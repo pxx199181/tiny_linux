@@ -159,6 +159,9 @@ extern int vfp_restore_user_hwstate(struct user_vfp __user *,
 #define TIF_USING_IWMMXT	17
 #define TIF_MEMDIE		18	/* is terminating due to OOM killer */
 #define TIF_RESTORE_SIGMASK	20
+#ifdef CONFIG_KERNEL_MODE_LINUX
+#define TIF_KU			23
+#endif /* CONFIG_KERNEL_MODE_LINUX */
 
 #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
 #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
@@ -169,6 +172,9 @@ extern int vfp_restore_user_hwstate(struct user_vfp __user *,
 #define _TIF_SYSCALL_TRACEPOINT	(1 << TIF_SYSCALL_TRACEPOINT)
 #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
 #define _TIF_USING_IWMMXT	(1 << TIF_USING_IWMMXT)
+#ifdef CONFIG_KERNEL_MODE_LINUX
+#define _TIF_KU			(1 << TIF_KU)
+#endif /* CONFIG_KERNEL_MODE_LINUX */
 
 /* Checks for any syscall work in entry-common.S */
 #define _TIF_SYSCALL_WORK (_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT | \
@@ -179,6 +185,16 @@ extern int vfp_restore_user_hwstate(struct user_vfp __user *,
  */
 #define _TIF_WORK_MASK		(_TIF_NEED_RESCHED | _TIF_SIGPENDING | \
 				 _TIF_NOTIFY_RESUME | _TIF_UPROBE)
+
+#ifndef __ASSEMBLY__
+#ifdef CONFIG_KERNEL_MODE_LINUX
+static inline int test_ti_thread_flag(struct thread_info *ti, int flag);
+static inline int test_thread_flag_ku(void)
+{
+	return test_ti_thread_flag(current_thread_info(), TIF_KU);
+}
+#endif /* CONFIG_KERNEL_MODE_LINUX */
+#endif /* __ASSEMBLY__ */
 
 #endif /* __KERNEL__ */
 #endif /* __ASM_ARM_THREAD_INFO_H */

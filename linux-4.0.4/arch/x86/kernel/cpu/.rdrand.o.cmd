@@ -7,6 +7,7 @@ deps_arch/x86/kernel/cpu/rdrand.o := \
   arch/x86/include/asm/processor.h \
     $(wildcard include/config/x86/vsmp.h) \
     $(wildcard include/config/x86/32.h) \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/smp.h) \
     $(wildcard include/config/x86/64.h) \
     $(wildcard include/config/cc/stackprotector.h) \

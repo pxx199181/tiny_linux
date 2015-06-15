@@ -142,4 +142,7 @@ static void cputime_to_compat_timeval(const cputime_t cputime,
 /*
  * We share all the actual code with the native (64-bit) version.
  */
+#ifdef CONFIG_KERNEL_MODE_LINUX
+#define INCLUDED_FOR_COMPAT
+#endif
 #include "binfmt_elf.c"

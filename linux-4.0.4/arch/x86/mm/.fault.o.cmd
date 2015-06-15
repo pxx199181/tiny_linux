@@ -10,6 +10,7 @@ deps_arch/x86/mm/fault.o := \
     $(wildcard include/config/x86/f00f/bug.h) \
     $(wildcard include/config/memory/failure.h) \
     $(wildcard include/config/x86/smap.h) \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/tracing.h) \
   include/linux/sched.h \
     $(wildcard include/config/sched/debug.h) \

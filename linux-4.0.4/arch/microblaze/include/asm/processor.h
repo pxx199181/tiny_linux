@@ -122,6 +122,11 @@ struct thread_struct {
 	.pgdir = swapper_pg_dir, \
 }
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+void start_kernel_thread(struct pt_regs *regs,
+			unsigned long pc, unsigned long usp);
+#endif
+
 /* Free all resources held by a thread. */
 static inline void release_thread(struct task_struct *dead_task)
 {

@@ -954,7 +954,11 @@ void __init trap_init(void)
 #endif
 
 	set_intr_gate(X86_TRAP_DE, divide_error);
+#if defined(CONFIG_KERNEL_MODE_LINUX) && defined(CONFIG_X86_32)
+	set_task_gate(X86_TRAP_NMI, GDT_ENTRY_NMI_TSS);
+#else
 	set_intr_gate_ist(X86_TRAP_NMI, &nmi, NMI_STACK);
+#endif
 	/* int4 can be called from all */
 	set_system_intr_gate(X86_TRAP_OF, &overflow);
 	set_intr_gate(X86_TRAP_BR, bounds);
@@ -983,7 +987,11 @@ void __init trap_init(void)
 		set_bit(i, used_vectors);
 
 #ifdef CONFIG_IA32_EMULATION
+#if defined(CONFIG_KERNEL_MODE_LINUX) && defined(CONFIG_X86_64)
+	set_system_intr_gate_orig(IA32_SYSCALL_VECTOR, ia32_syscall);
+#else
 	set_system_intr_gate(IA32_SYSCALL_VECTOR, ia32_syscall);
+#endif
 	set_bit(IA32_SYSCALL_VECTOR, used_vectors);
 #endif
 

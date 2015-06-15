@@ -267,6 +267,8 @@ kmemcheck.txt
 	- info on dynamic checker that detects uses of uninitialized memory.
 kmemleak.txt
 	- info on how to make use of the kernel memory leak detection system
+kml.txt
+	- info on Kernel Mode Linux.
 ko_KR/
 	- directory with Korean translations of various documents
 kobject.txt

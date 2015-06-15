@@ -9,6 +9,7 @@ deps_kernel/elfcore.o := \
     $(wildcard include/config/x86/32.h) \
     $(wildcard include/config/compat.h) \
     $(wildcard include/config/x86/x32/abi.h) \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/ia32/emulation.h) \
   include/linux/thread_info.h \
     $(wildcard include/config/debug/stack/usage.h) \

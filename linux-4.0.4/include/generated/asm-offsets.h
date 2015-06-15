@@ -49,7 +49,7 @@
 
 #define saved_context_gdt_desc 33 /* offsetof(struct saved_context, gdt_desc)	# */
 
-#define TSS_sysenter_sp0 -8572 /* offsetof(struct tss_struct, x86_tss.sp0) - sizeof(struct tss_struct)	# */
+#define TSS_sysenter_sp0 -8700 /* offsetof(struct tss_struct, x86_tss.sp0) - sizeof(struct tss_struct)	# */
 
 #define __NR_syscall_max 358 /* sizeof(syscalls) - 1	# */
 #define NR_syscalls 359 /* sizeof(syscalls)	# */

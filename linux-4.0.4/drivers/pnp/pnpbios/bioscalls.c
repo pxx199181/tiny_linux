@@ -86,6 +86,7 @@ static inline u16 call_pnp_bios(u16 func, u16 arg1, u16 arg2, u16 arg3,
 	u16 status;
 	struct desc_struct save_desc_40;
 	int cpu;
+	NMI_DECLS_GS
 
 	/*
 	 * PnP BIOSes are generally not terribly re-entrant.
@@ -95,6 +96,8 @@ static inline u16 call_pnp_bios(u16 func, u16 arg1, u16 arg2, u16 arg3,
 		return PNP_FUNCTION_NOT_SUPPORTED;
 
 	cpu = get_cpu();
+
+	NMI_SAVE_GS;
 	save_desc_40 = get_cpu_gdt_table(cpu)[0x40 / 8];
 	get_cpu_gdt_table(cpu)[0x40 / 8] = bad_bios_desc;
 
@@ -135,6 +138,7 @@ static inline u16 call_pnp_bios(u16 func, u16 arg1, u16 arg2, u16 arg3,
 	spin_unlock_irqrestore(&pnp_bios_lock, flags);
 
 	get_cpu_gdt_table(cpu)[0x40 / 8] = save_desc_40;
+	NMI_RESTORE_GS;
 	put_cpu();
 
 	/* If we get here and this is set then the PnP BIOS faulted on us. */

@@ -69,6 +69,10 @@
 #define sysexit_audit	syscall_exit_work
 #endif
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+#include <linux/threads.h>
+#endif
+
 	.section .entry.text, "ax"
 
 /*
@@ -254,6 +258,117 @@
 	POP_GS_EX
 .endm
 
+#ifndef CONFIG_KERNEL_MODE_LINUX
+
+#define SWITCH_STACK_TO_KK_INTERRUPT
+#define SWITCH_STACK_TO_KK_EXCEPTION
+#define SWITCH_STACK_TO_KK_EXCEPTION_WITH_ERROR_CODE
+
+#else
+
+#define TASK_SIZE               (__PAGE_OFFSET)
+
+#define __KU_CS_INTERRUPT	((1 << 16) | __USER_CS)
+#define __KU_CS_EXCEPTION	((1 << 17) | __USER_CS)
+
+/*
+ * These are macros for stack switching.
+ */
+
+.macro SWITCH_STACK_TO_KK_INTERRUPT
+	/* Check whether if we were in the kernel-user mode or not. */
+	cmpl $(TASK_SIZE), %esp
+	ja 1f
+
+	/*
+	 * We assume that the processor clears the High 16 bits of XCS.
+	 */
+
+	/*
+	 * We were in the kernel-user mode.
+	 * Therefore, %fs == __KERNEL_PERCPU.
+	 */
+
+	/*
+	 * We can't use the space where CS is saved,
+	 * because it may cause a page fault (though it's very rare...)
+	 * and it conflicts with the interrupt.
+	 */
+	movl %ebp, PER_CPU_VAR(unused)		/* save %ebp */
+	movl %esp, %ebp				/* save %esp to %ebp */
+	movl PER_CPU_VAR(esp0), %esp		/* switch the stack! */
+
+	addl $-4, %esp			/* push XSS */
+	pushl %ebp			/* push old %esp */
+	pushl $0			/* push EFLAGS */
+	pushl $(__KU_CS_INTERRUPT)	/* push XCS */
+	pushl $0			/* push EIP */
+
+	movl PER_CPU_VAR(unused), %ebp	/* restore %ebp */
+1:
+.endm
+
+.macro SWITCH_STACK_TO_KK_EXCEPTION
+	/* Check whether if we were in the kernel-user mode or not. */
+	cmpl $(TASK_SIZE), %esp
+	ja 1f
+
+	/*
+	 * We assume that the processor clears the High 16 bits of XCS.
+	 */
+
+	/*
+	 * We were in the kernel-user mode.
+	 * Therefore, %fs == __KERNEL_PERCPU && XCS == __KERNEL_CS.
+	 */
+	movl %ebp, 4(%esp)			/* save %ebp to the stack */
+	movl %esp, %ebp				/* save old %esp to %ebp */
+	movl PER_CPU_VAR(esp0), %esp		/* switch the stack! */
+
+	addl $12, %ebp
+
+	addl $-4, %esp			/* push XSS */
+	pushl %ebp			/* push old %esp */
+	pushl -4(%ebp)			/* push EFLAGS */
+	pushl $(__KU_CS_EXCEPTION)	/* push XCS */
+	pushl -12(%ebp)			/* push EIP */
+
+	movl -8(%ebp), %ebp		/* restore %ebp */
+1:
+.endm
+
+.macro SWITCH_STACK_TO_KK_EXCEPTION_WITH_ERROR_CODE
+	/* Check whether if we were in the kernel-user mode or not. */
+	cmpl $(TASK_SIZE), %esp
+	ja 1f
+
+	/*
+	 * We assume that the processor clears the High 16 bits of XCS.
+	 */
+
+	/*
+	 * We were in the kernel-user mode.
+	 * Therefore, %fs == __KERNEL_PERCPU && XCS == __KERNEL_CS.
+	 */
+	movl %ebp, 8(%esp)			/* save %ebp to the stack */
+	movl %esp, %ebp				/* save old %esp to %ebp */
+	movl PER_CPU_VAR(esp0), %esp		/* switch the stack! */
+
+	addl $16, %ebp
+
+	addl $-4, %esp			/* push XSS */
+	pushl %ebp			/* push old %esp */
+	pushl -4(%ebp)			/* push EFLAGS */
+	pushl $(__KU_CS_EXCEPTION)	/* push XCS */
+	pushl -12(%ebp)			/* push EIP */
+	pushl -16(%ebp)			/* push error_code */
+
+	movl -8(%ebp), %ebp		/* restore %ebp */
+1:
+.endm
+
+#endif
+
 .macro RING0_INT_FRAME
 	CFI_STARTPROC simple
 	CFI_SIGNAL_FRAME
@@ -379,6 +494,9 @@ ENTRY(ia32_sysenter_target)
 	CFI_DEF_CFA esp, 0
 	CFI_REGISTER esp, ebp
 	movl TSS_sysenter_sp0(%esp),%esp
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	.globl sysenter_past_esp
+#endif
 sysenter_past_esp:
 	/*
 	 * Interrupts are disabled here, but we can't trace it until
@@ -489,6 +607,7 @@ ENDPROC(ia32_sysenter_target)
 	# system call handler stub
 ENTRY(system_call)
 	RING0_INT_FRAME			# can't unwind into user space anyway
+	SWITCH_STACK_TO_KK_EXCEPTION
 	ASM_CLAC
 	pushl_cfi %eax			# save orig_eax
 	SAVE_ALL
@@ -529,6 +648,13 @@ restore_all_notrace:
 #endif
 restore_nocheck:
 	RESTORE_REGS 4			# skip orig_eax/error_code
+#ifdef CONFIG_KERNEL_MODE_LINUX
+restore_all_return:
+/* Switch stack KK -> KU. */
+	/* check whether if stack switch occured or not */
+	cmpw $0x0, 6(%esp)
+	jne ret_to_ku
+#endif
 irq_return:
 	INTERRUPT_RETURN
 .section .fixup,"ax"
@@ -538,6 +664,109 @@ ENTRY(iret_exc)
 	jmp error_code
 .previous
 	_ASM_EXTABLE(irq_return,iret_exc)
+
+#ifdef CONFIG_KERNEL_MODE_LINUX
+
+ENTRY(ret_to_ku)
+	ASM_STAC	
+	cmpl $__KU_CS_EXCEPTION, 4(%esp)
+	je ret_to_ku_from_exception
+	jmp ret_to_ku_from_interrupt
+
+/*
+ * The stack layout for ret_to_ku_from_interrupt:
+ *
+ * %esp --> 0
+ *          __KU_CS_INTERRUPT
+ *          0
+ *          ESP
+ *          XXX
+ *          ...
+ *
+ * ESP  --> EIP
+ *          CS
+ *          EFLAGS
+ */
+ENTRY(ret_to_ku_from_interrupt)
+	movl %eax, (%esp)	/* save %eax  */
+	movl %edx, 4(%esp)	/* save %edx */
+
+	movl 12(%esp), %eax	/* load ESP to %eax */
+
+	movl 8(%eax), %edx	/* load EFLAGS to %edx */
+	movl %edx, 4(%eax)
+	movl (%eax), %edx	/* load EIP to %edx */
+	movl %edx, 8(%eax)
+
+	movl 4(%esp), %edx	/* restore %edx */
+	movl (%esp), %eax	/* restore %eax */
+
+	movl 12(%esp), %esp	/* switch the stack! */
+	addl $4, %esp
+	popfl			/* restore EFLAGS */
+	ret
+
+/*
+ * The stack layout for ret_to_ku_from_exception:
+ *
+ * %esp --> EIP
+ *          __KU_CS_EXCEPTION
+ *          EFLAGS
+ *          ESP
+ *          XXX
+ *          ...
+ */
+ENTRY(ret_to_ku_from_exception)
+	movl $__KERNEL_CS, 4(%esp)	/* XCS = __KERNEL_CS */
+	pushl %ebp
+
+	/* check whether if we can skip iret or not */
+	movl 12(%esp), %ebp		/* load EFLAGS to %ebp */
+	testl $~(0x240fd7), %ebp
+	movl 16(%esp), %ebp		/* load ESP to %ebp */
+	jz skip_iret
+
+	addl $-16, %ebp
+ret_to_ku_mov_ebp:	popl (%ebp)		/* old EBP */
+ret_to_ku_mov_eip:	popl 4(%ebp)		/* EIP */
+ret_to_ku_mov_cs:	popl 8(%ebp)		/* XCS */
+ret_to_ku_mov_eflags:	popl 12(%ebp)		/* EFLAGS */
+			movl %ebp, %esp		/* switch the stack! */
+ret_to_ku_pop_ebp:	popl %ebp		/* %ebp = old EBP */
+ret_to_ku_iret:		INTERRUPT_RETURN
+
+.section __ex_table,"a"
+	.align 4
+	.long ret_to_ku_mov_ebp,	iret_exc
+	.long ret_to_ku_mov_eip,	iret_exc
+	.long ret_to_ku_mov_cs,		iret_exc
+	.long ret_to_ku_mov_eflags,	iret_exc
+	.long ret_to_ku_pop_ebp,	iret_exc
+	.long ret_to_ku_iret,		iret_exc
+.previous
+
+ENTRY(skip_iret)
+	addl $-12, %ebp
+skip_iret_mov_ebp:	popl (%ebp)		/* old EBP */
+skip_iret_mov_eip:	popl 8(%ebp)		/* EIP */
+			addl $4, %esp		/* skip CS */
+skip_iret_mov_eflags:	popl 4(%ebp)		/* EFLAGS */
+			movl %ebp, %esp		/* switch the stack! */
+skip_iret_pop_ebp:	popl %ebp		/* %ebp = old EBP */
+skip_iret_pop_eflags:	popfl
+skip_iret_ret:		ret
+
+.section __ex_table,"a"
+	.align 4
+	.long skip_iret_mov_ebp,	iret_exc
+	.long skip_iret_mov_eip,	iret_exc
+	.long skip_iret_mov_eflags,	iret_exc
+	.long skip_iret_pop_ebp,	iret_exc
+	.long skip_iret_pop_eflags,	iret_exc
+	.long skip_iret_ret,		iret_exc
+.previous
+
+#endif
 
 #ifdef CONFIG_X86_ESPFIX32
 	CFI_RESTORE_STATE
@@ -736,10 +965,11 @@ vector=FIRST_EXTERNAL_VECTOR
 	.balign 32
   .rept	7
     .if vector < FIRST_SYSTEM_VECTOR
+1:	SWITCH_STACK_TO_KK_INTERRUPT
       .if vector <> FIRST_EXTERNAL_VECTOR
 	CFI_ADJUST_CFA_OFFSET -4
       .endif
-1:	pushl_cfi $(~vector+0x80)	/* Note: always in signed byte range */
+	pushl_cfi $(~vector+0x80)	/* Note: always in signed byte range */
       .if ((vector-FIRST_EXTERNAL_VECTOR)%7) <> 6
 	jmp 2f
       .endif
@@ -776,6 +1006,7 @@ ENDPROC(common_interrupt)
 #define BUILD_INTERRUPT3(name, nr, fn)	\
 ENTRY(name)				\
 	RING0_INT_FRAME;		\
+	SWITCH_STACK_TO_KK_INTERRUPT;	\
 	ASM_CLAC;			\
 	pushl_cfi $~(nr);		\
 	SAVE_ALL;			\
@@ -803,6 +1034,7 @@ ENDPROC(name)
 
 ENTRY(coprocessor_error)
 	RING0_INT_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION
 	ASM_CLAC
 	pushl_cfi $0
 	pushl_cfi $do_coprocessor_error
@@ -812,6 +1044,7 @@ END(coprocessor_error)
 
 ENTRY(simd_coprocessor_error)
 	RING0_INT_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION
 	ASM_CLAC
 	pushl_cfi $0
 #ifdef CONFIG_X86_INVD_BUG
@@ -834,6 +1067,7 @@ END(simd_coprocessor_error)
 
 ENTRY(device_not_available)
 	RING0_INT_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION
 	ASM_CLAC
 	pushl_cfi $-1			# mark this as an int
 	pushl_cfi $do_device_not_available
@@ -855,6 +1089,7 @@ END(native_irq_enable_sysexit)
 
 ENTRY(overflow)
 	RING0_INT_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION
 	ASM_CLAC
 	pushl_cfi $0
 	pushl_cfi $do_overflow
@@ -864,6 +1099,7 @@ END(overflow)
 
 ENTRY(bounds)
 	RING0_INT_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION
 	ASM_CLAC
 	pushl_cfi $0
 	pushl_cfi $do_bounds
@@ -873,6 +1109,7 @@ END(bounds)
 
 ENTRY(invalid_op)
 	RING0_INT_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION
 	ASM_CLAC
 	pushl_cfi $0
 	pushl_cfi $do_invalid_op
@@ -882,6 +1119,7 @@ END(invalid_op)
 
 ENTRY(coprocessor_segment_overrun)
 	RING0_INT_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION
 	ASM_CLAC
 	pushl_cfi $0
 	pushl_cfi $do_coprocessor_segment_overrun
@@ -889,8 +1127,146 @@ ENTRY(coprocessor_segment_overrun)
 	CFI_ENDPROC
 END(coprocessor_segment_overrun)
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+
+PAGE_FAULT_ERROR_CODE = 0x2
+TSS_ESP0   =  4
+TSS_EIP    = 32
+TSS_EFLAGS = 36
+TSS_CS     = 76
+TSS_ESP    = 56
+TSS_SS     = 80
+
+.macro kml_get_kernel_stack pre_tss, ret
+	cmpw $__KERNEL_CS, TSS_CS(\pre_tss)
+	jne 1f
+
+	movl TSS_ESP(\pre_tss), \ret
+	# If the previous ESP points to kernel-space,
+	# we used the kernel stack.
+	cmpl $TASK_SIZE, \ret
+	jbe 1f
+
+	# If we were in the first instruction of
+	# ia32_sysenter_target, the previous ESP points to
+	# tss->esp1, so we need to reset it to tss->esp0.
+	# EIP will be adjusted in task.c
+	cmpl $ia32_sysenter_target, TSS_EIP(\pre_tss)
+	jne 2f
+
+	# We used the user stack, so
+	# needs to load the kernel stack
+	# from ESP0 field of TSS.
+1:
+	movl PER_CPU_VAR(esp0), \ret
+/*
+	movl $(__KERNEL_PERCPU), %eax
+	movl %eax, %ds
+	movl (ESP0_IN_PDA), \ret
+	movl $(__USER_DS), %eax
+	movl %eax, %ds
+*/
+2:
+.endm
+
+.macro kml_recreate_kernel_stack_layout pre_tss
+	cmpw $__KERNEL_CS, TSS_CS(\pre_tss)
+	jne 1f
+
+	movl TSS_ESP(\pre_tss), %eax
+	cmpl $TASK_SIZE, %eax
+	ja 2f
+1:
+	pushl TSS_SS(\pre_tss)
+	pushl TSS_ESP(\pre_tss)
+2:
+	pushl TSS_EFLAGS(\pre_tss)
+	pushl TSS_CS(\pre_tss)
+	pushl TSS_EIP(\pre_tss)
+.endm
+
+.macro call_helper func target_address cur_tss pre_tss
+	pushl %esp
+	pushl \pre_tss
+	pushl \cur_tss
+	pushl \target_address 
+	call \func
+	addl $16, %esp
+.endm
+
+.macro ret_from_task_without_iret cur_tss tss_desc
+	/* clear NT in EFLAGS */
+	pushfl
+	andl $~X86_EFLAGS_NT, (%esp)
+	popfl
+
+	movl TSS_ESP0(\cur_tss), %esp
+
+	/* We don't use iret, because it will enable NMI */
+	ljmp $(\tss_desc*8), $0x0
+.endm
+
+/*
+ * This is a task-handler for double fault.
+ * In Kernel Mode Linux, user programs may be executed in ring 0 (kernel mode).
+ * Therefore, normal interrupt handling mechanism doesn't work.
+ * For example, if a page fault occurs in a stack,
+ * CPU cannot generate a page fault exception because there is no stack
+ * to save the CPU context. We call this problem "stack starvation".
+ * To solve the stack starvation, we handle double fault with task-handler. 
+ *
+ * Initial stack layout (dft_stack_struct)
+ *
+ * %esp --> error_code (<-- pushed by CPU)
+ *          pointer to dft_tss
+ *          pointer to normal_tss
+ */
+ENTRY(double_fault_task)
+	movl 4(%esp), %edi		# get current TSS.
+/* %edi = current_tss */
+	movl 8(%esp), %ebx		# get normal TSS.
+/* %ebx = prev_tss */
+
+	# get kernel stack.
+	kml_get_kernel_stack %ebx, %esi
+
+	movl %esi, %esp
+/* From now on, we can use stack. */
+
+	# recreate stack layout as if normal interrupt occurs.
+	kml_recreate_kernel_stack_layout %ebx
+
+	call_helper prepare_fault_handler, $double_fault_fixup, %edi, %ebx
+
+	ret_from_task_without_iret %edi, GDT_ENTRY_TSS
+
+	jmp double_fault_task
+
+ENTRY(double_fault_fixup)
+	pushl %eax
+	pushl %edx
+	pushl %ecx
+
+	movl %cr2, %eax
+	pushl %eax
+
+	call do_interrupt_handling
+
+	popl %eax
+	movl %eax, %cr2
+
+	popl %ecx
+	popl %edx
+	popl %eax
+
+	pushl $PAGE_FAULT_ERROR_CODE
+	pushl $do_page_fault
+	jmp error_code
+#endif
+
 ENTRY(invalid_TSS)
 	RING0_EC_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION_WITH_ERROR_CODE
 	ASM_CLAC
 	pushl_cfi $do_invalid_TSS
 	jmp error_code
@@ -899,6 +1275,7 @@ END(invalid_TSS)
 
 ENTRY(segment_not_present)
 	RING0_EC_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION_WITH_ERROR_CODE
 	ASM_CLAC
 	pushl_cfi $do_segment_not_present
 	jmp error_code
@@ -907,6 +1284,7 @@ END(segment_not_present)
 
 ENTRY(stack_segment)
 	RING0_EC_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION_WITH_ERROR_CODE
 	ASM_CLAC
 	pushl_cfi $do_stack_segment
 	jmp error_code
@@ -915,6 +1293,7 @@ END(stack_segment)
 
 ENTRY(alignment_check)
 	RING0_EC_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION_WITH_ERROR_CODE
 	ASM_CLAC
 	pushl_cfi $do_alignment_check
 	jmp error_code
@@ -923,6 +1302,7 @@ END(alignment_check)
 
 ENTRY(divide_error)
 	RING0_INT_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION
 	ASM_CLAC
 	pushl_cfi $0			# no error code
 	pushl_cfi $do_divide_error
@@ -933,6 +1313,7 @@ END(divide_error)
 #ifdef CONFIG_X86_MCE
 ENTRY(machine_check)
 	RING0_INT_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION
 	ASM_CLAC
 	pushl_cfi $0
 	pushl_cfi machine_check_vector
@@ -943,6 +1324,7 @@ END(machine_check)
 
 ENTRY(spurious_interrupt_bug)
 	RING0_INT_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION
 	ASM_CLAC
 	pushl_cfi $0
 	pushl_cfi $do_spurious_interrupt_bug
@@ -1217,6 +1599,12 @@ return_to_handler:
 	jmp *%ecx
 #endif
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+.pushsection .rodata,"a"
+#include "kml_syscall_table_32.S"
+.popsection
+#endif
+
 #ifdef CONFIG_TRACING
 ENTRY(trace_page_fault)
 	RING0_EC_FRAME
@@ -1229,6 +1617,7 @@ END(trace_page_fault)
 
 ENTRY(page_fault)
 	RING0_EC_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION_WITH_ERROR_CODE
 	ASM_CLAC
 	pushl_cfi $do_page_fault
 	ALIGN
@@ -1317,6 +1706,117 @@ debug_stack_correct:
 	CFI_ENDPROC
 END(debug)
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+
+/*
+ * Initial stack layout (nmi_stack_struct)
+ *
+ *          [ unused entry ] <-- used if NMI occurs in DF
+ * %esp --> pointer to nmi_tss
+ *          pointer to normal_tss
+ *          pointer to the descriptor of doublefault_tss
+ *          need_nmi flag
+ */
+ENTRY(nmi_task)
+	/* Check whether if we were in the double fault task or not. */
+	movl (%esp), %edi		# get current TSS.
+/* %edi = current_tss */
+	/* Load the previous tss selector to %ax */
+	movw (%edi), %ax
+	cmpw $__DOUBLEFAULT_TSS, %ax
+	jne 1f
+
+	/* We were in the double fault task. */
+	/*
+	 * Do not handle this NMI,
+	 * and notify the double fault task.
+	 */
+
+	/* clear busy flag in DFT tss descriptor */
+	movl 8(%esp), %edx
+	movl (%edx), %eax
+	andl $~0x00000200, %eax
+	movl %eax, (%edx)
+
+	movl $1, 12(%esp)		# need_nmi = 1
+
+	ret_from_task_without_iret %edi, GDT_ENTRY_DOUBLEFAULT_TSS
+
+	jmp nmi_task
+1:
+	/* We were in the normal task. */
+
+	movl 4(%esp), %ebx		# get normal TSS.
+/* %ebx = prev_tss */
+
+	# get kernel stack.
+	kml_get_kernel_stack %ebx, %esi
+
+	movl %esi, %esp
+/* From now on, we can use stack. */
+
+	# recreate stack layout as if normal interrupt occurs.
+	kml_recreate_kernel_stack_layout %ebx
+
+	# make room for %fs and %gs
+	addl $-8, %esp
+
+	call_helper prepare_nmi_handler, $nmi_fixup, %edi, %ebx
+
+	ret_from_task_without_iret %edi, GDT_ENTRY_TSS
+
+	jmp nmi_task
+
+.macro LLDT
+	pushl %eax
+	movl $(GDT_ENTRY_LDT * 8), %eax
+0:
+	lldtw %ax
+1:
+	popl %eax
+.section .fixup, "ax"
+2:
+	xorl %eax, %eax
+	lldtw %ax
+	jmp 1b
+.previous
+.section __ex_table,"a"
+	.align 4
+	.long 0b, 2b
+.previous
+.endm
+
+.macro POPSEG seg
+0:
+	popl \seg
+1:
+.section .fixup, "ax"
+2:
+	pushl $0
+	popl \seg
+	addl $4, %esp
+	jmp 1b
+.previous
+.section __ex_table,"a"
+	.align 4
+	.long 0b, 2b
+.previous
+.endm
+
+ENTRY(nmi_fixup)
+	pushfl
+	pushl $__KERNEL_CS
+	pushl $0f
+	jmp nmi
+0:
+	LLDT
+	POPSEG %gs
+	POPSEG %fs
+
+	jmp restore_all_return
+
+#endif
+
 /*
  * NMI is doubly nasty. It can happen _while_ we're handling
  * a debug fault, and the debug fault hasn't yet been able to
@@ -1402,6 +1902,7 @@ END(nmi)
 
 ENTRY(int3)
 	RING0_INT_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION
 	ASM_CLAC
 	pushl_cfi $-1			# mark this as an int
 	SAVE_ALL
@@ -1415,6 +1916,7 @@ END(int3)
 
 ENTRY(general_protection)
 	RING0_EC_FRAME
+	SWITCH_STACK_TO_KK_EXCEPTION_WITH_ERROR_CODE
 	pushl_cfi $do_general_protection
 	jmp error_code
 	CFI_ENDPROC

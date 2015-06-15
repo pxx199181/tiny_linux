@@ -36,6 +36,7 @@ deps_arch/x86/boot/mkcpustr := \
     $(wildcard include/config/x86/intel/mpx.h) \
   arch/x86/boot/../include/asm/cpufeature.h \
     $(wildcard include/config/x86/feature/names.h) \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/x86/debug/static/cpu/has.h) \
   arch/x86/boot/../kernel/cpu/capflags.c \
 

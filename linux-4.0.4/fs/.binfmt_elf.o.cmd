@@ -3,10 +3,12 @@ cmd_fs/binfmt_elf.o := gcc -Wp,-MD,fs/.binfmt_elf.o.d  -nostdinc -isystem /usr/l
 source_fs/binfmt_elf.o := fs/binfmt_elf.c
 
 deps_fs/binfmt_elf.o := \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/uselib.h) \
     $(wildcard include/config/elf/core.h) \
     $(wildcard include/config/stack/growsup.h) \
     $(wildcard include/config/arch/binfmt/elf/state.h) \
+    $(wildcard include/config/kml/check/chroot.h) \
     $(wildcard include/config/arch/binfmt/elf/randomize/pie.h) \
     $(wildcard include/config/compat/brk.h) \
   include/linux/module.h \
@@ -818,6 +820,7 @@ deps_fs/binfmt_elf.o := \
   include/uapi/linux/utsname.h \
   include/linux/coredump.h \
     $(wildcard include/config/coredump.h) \
+  include/linux/fs_struct.h \
 
 fs/binfmt_elf.o: $(deps_fs/binfmt_elf.o)
 

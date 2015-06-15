@@ -158,6 +158,10 @@ static void __init apic_intr_init(void)
 #endif
 }
 
+#if defined(CONFIG_KERNEL_MODE_LINUX) && defined(CONFIG_X86_32)
+void i8259A_test_ISR_and_handle_interrupt(void);
+#endif
+
 void __init native_init_IRQ(void)
 {
 	int i;
@@ -190,5 +194,10 @@ void __init native_init_IRQ(void)
 
 #ifdef CONFIG_X86_32
 	irq_ctx_init(smp_processor_id());
+
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	test_ISR_and_handle_interrupt = i8259A_test_ISR_and_handle_interrupt;
+#endif
+
 #endif
 }

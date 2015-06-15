@@ -27,6 +27,9 @@ struct vdso_image {
 	long sym___kernel_rt_sigreturn;
 	long sym___kernel_vsyscall;
 	long sym_VDSO32_SYSENTER_RETURN;
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	long sym___kernel_vsyscall_kml;
+#endif
 };
 
 #ifdef CONFIG_X86_64

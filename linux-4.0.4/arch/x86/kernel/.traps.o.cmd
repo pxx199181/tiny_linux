@@ -13,6 +13,7 @@ deps_arch/x86/kernel/traps.o := \
     $(wildcard include/config/kgdb/low/level/trap.h) \
     $(wildcard include/config/kprobes.h) \
     $(wildcard include/config/math/emulation.h) \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/x86/mce.h) \
     $(wildcard include/config/ia32/emulation.h) \
   include/linux/context_tracking.h \

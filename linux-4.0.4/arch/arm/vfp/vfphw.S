@@ -84,8 +84,21 @@ ENTRY(vfp_support_entry)
 	ldr	r3, [sp, #S_PSR]	@ Neither lazy restore nor FP exceptions
 	and	r3, r3, #MODE_MASK	@ are supported in kernel mode
 	teq	r3, #USR_MODE
+#ifndef CONFIG_KERNEL_MODE_LINUX
 	bne	vfp_kmode_exception	@ Returns through lr
+#elseif
+	beq	vfp_user_mode
+	teq	r3, #SYSTEM_MODE
+	bne	vfp_kmode_exception
+	get_thread_info r3
+	ldr	r3, [r3, #TI_FLAGS]
+	tst	r3, #_TIF_KU
+	beq	vfp_kmode_exception
+#endif
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+vfp_user_mode:
+#endif
 	VFPFMRX	r1, FPEXC		@ Is the VFP enabled?
 	DBGSTR1	"fpexc %08x", r1
 	tst	r1, #FPEXC_EN

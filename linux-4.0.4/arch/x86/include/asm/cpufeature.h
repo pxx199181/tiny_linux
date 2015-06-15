@@ -390,6 +390,9 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
 #define cpu_has_eager_fpu	boot_cpu_has(X86_FEATURE_EAGER_FPU)
 #define cpu_has_topoext		boot_cpu_has(X86_FEATURE_TOPOEXT)
 #define cpu_has_bpext		boot_cpu_has(X86_FEATURE_BPEXT)
+#ifdef CONFIG_KERNEL_MODE_LINUX
+#define cpu_has_smap		boot_cpu_has(X86_FEATURE_SMAP)
+#endif
 
 #if __GNUC__ >= 4
 extern void warn_pre_alternatives(void);

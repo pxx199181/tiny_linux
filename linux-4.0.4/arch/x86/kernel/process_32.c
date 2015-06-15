@@ -211,9 +211,42 @@ start_thread(struct pt_regs *regs, unsigned long new_ip, unsigned long new_sp)
 	 * some work pending.
 	 */
 	set_thread_flag(TIF_NOTIFY_RESUME);
+
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	clear_thread_flag(TIF_KU);
+#endif
 }
 EXPORT_SYMBOL_GPL(start_thread);
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+void
+start_kernel_thread(struct pt_regs *regs, unsigned long new_ip, unsigned long new_sp)
+{
+	set_user_gs(regs, 0);
+	regs->fs		= __KERNEL_PERCPU;
+	set_fs(KERNEL_DS);
+	regs->ds		= __USER_DS;
+	regs->es		= __USER_DS;
+	regs->ss		= __KERNEL_DS;
+	regs->cs		= __KU_CS_EXCEPTION;
+	regs->ip		= new_ip;
+	regs->sp		= new_sp;
+	regs->flags		= X86_EFLAGS_IF;
+
+	if (cpu_has_smap) {
+		regs->flags	|= X86_EFLAGS_AC;
+	}
+
+	/*
+	 * force it to the iret return path by making it look as if there was
+	 * some work pending.
+	 */
+	set_thread_flag(TIF_NOTIFY_RESUME);
+
+	set_thread_flag(TIF_KU);
+}
+EXPORT_SYMBOL_GPL(start_kernel_thread);
+#endif
 
 /*
  *	switch_to(x,y) should switch tasks from x to y.
@@ -260,6 +293,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
 	 */
 	load_sp0(tss, next);
 
+#ifndef CONFIG_KERNEL_MODE_LINUX
 	/*
 	 * Save away %gs. No need to save %fs, as it was saved on the
 	 * stack on entry.  No need to save %es and %ds, as those are
@@ -271,11 +305,12 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
 	 * running inside of a hypervisor layer.
 	 */
 	lazy_save_gs(prev->gs);
+#endif
 
 	/*
 	 * Load the per-thread Thread-Local Storage descriptor.
 	 */
-	load_TLS(next, cpu);
+	load_TLS__nmi_unsafe(next, cpu);
 
 	/*
 	 * Restore IOPL if needed.  In normal use, the flags restore

@@ -17,8 +17,15 @@ struct pt_regs {
 	unsigned long uregs[18];
 };
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+static inline int test_thread_flag_ku(void);
+
+#define user_mode(regs)	\
+	((((regs)->ARM_cpsr & 0xf) == 0) || ((((regs)->ARM_cpsr & 0xf) == 0xf) && test_thread_flag_ku()))
+#else
 #define user_mode(regs)	\
 	(((regs)->ARM_cpsr & 0xf) == 0)
+#endif
 
 #ifdef CONFIG_ARM_THUMB
 #define thumb_mode(regs) \
@@ -60,6 +67,10 @@ static inline int valid_user_regs(struct pt_regs *regs)
 	if ((regs->ARM_cpsr & PSR_I_BIT) == 0) {
 		if (mode == USR_MODE)
 			return 1;
+#ifdef CONFIG_KERNEL_MODE_LINUX
+		if (mode == SYSTEM_MODE && test_thread_flag_ku())
+			return 1;
+#endif /* CONFIG_KERNEL_MODE_LINUX */
 		if (elf_hwcap & HWCAP_26BIT && mode == USR26_MODE)
 			return 1;
 	}

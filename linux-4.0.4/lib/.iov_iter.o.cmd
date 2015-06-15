@@ -3,6 +3,7 @@ cmd_lib/iov_iter.o := gcc -Wp,-MD,lib/.iov_iter.o.d  -nostdinc -isystem /usr/lib
 source_lib/iov_iter.o := lib/iov_iter.c
 
 deps_lib/iov_iter.o := \
+    $(wildcard include/config/kernel/mode/linux.h) \
   include/linux/export.h \
     $(wildcard include/config/have/underscore/symbol/prefix.h) \
     $(wildcard include/config/modules.h) \

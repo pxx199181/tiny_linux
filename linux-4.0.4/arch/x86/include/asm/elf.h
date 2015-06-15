@@ -275,7 +275,7 @@ extern int force_personality32;
 
 struct task_struct;
 
-#define	ARCH_DLINFO_IA32						\
+#define	ARCH_DLINFO_IA32_ORIG						\
 do {									\
 	if (vdso32_enabled) {						\
 		NEW_AUX_ENT(AT_SYSINFO,	VDSO_ENTRY);			\
@@ -283,11 +283,32 @@ do {									\
 	}								\
 } while (0)
 
+#define ARCH_DLINFO_IA32_KML						\
+do {									\
+	if (vdso32_enabled) {						\
+		NEW_AUX_ENT(AT_SYSINFO,					\
+			    (kernel_mode ? VDSO_KML_ENTRY : VDSO_ENTRY));\
+		NEW_AUX_ENT(AT_SYSINFO_EHDR, VDSO_CURRENT_BASE);	\
+	}								\
+} while (0)
+
+#ifndef CONFIG_KERNEL_MODE_LINUX
+#define ARCH_DLINFO_IA32 ARCH_DLINFO_IA32_ORIG
+#else
+#define ARCH_DLINFO_IA32 ARCH_DLINFO_IA32_KML
+#endif
+
 #ifdef CONFIG_X86_32
 
 #define STACK_RND_MASK (0x7ff)
 
 #define ARCH_DLINFO		ARCH_DLINFO_IA32
+
+#ifdef CONFIG_KERNEL_MODE_LINUX
+#define VDSO_KML_ENTRY \
+	((unsigned long)current->mm->context.vdso +			\
+	 selected_vdso32->sym___kernel_vsyscall_kml)
+#endif
 
 /* update AT_VECTOR_SIZE_ARCH if the number of NEW_AUX_ENT entries changes */
 
@@ -296,12 +317,36 @@ do {									\
 /* 1GB for 64bit, 8MB for 32bit */
 #define STACK_RND_MASK (test_thread_flag(TIF_ADDR32) ? 0x7ff : 0x3fffff)
 
-#define ARCH_DLINFO							\
+#define ARCH_DLINFO_ORIG						\
 do {									\
 	if (vdso64_enabled)						\
 		NEW_AUX_ENT(AT_SYSINFO_EHDR,				\
 			    (unsigned long __force)current->mm->context.vdso); \
 } while (0)
+
+#ifdef CONFIG_KERNEL_MODE_LINUX
+extern void kml_call_entry(void);
+#endif
+
+#define VDSO_KML_ENTRY \
+	((unsigned long) kml_call_entry)
+
+#define ARCH_DLINFO_KML							\
+do {									\
+	if (vdso64_enabled) {						\
+		if (kernel_mode) {					\
+			NEW_AUX_ENT(AT_SYSINFO, VDSO_KML_ENTRY);	\
+		}							\
+		NEW_AUX_ENT(AT_SYSINFO_EHDR,				\
+			    (unsigned long __force)current->mm->context.vdso); \
+	}								\
+} while (0)
+
+#ifndef CONFIG_KERNEL_MODE_LINUX
+#define ARCH_DLINFO ARCH_DLINFO_ORIG
+#else
+#define ARCH_DLINFO ARCH_DLINFO_KML
+#endif
 
 /* As a historical oddity, the x32 and x86_64 vDSOs are controlled together. */
 #define ARCH_DLINFO_X32							\
@@ -317,7 +362,7 @@ do {									\
 if (test_thread_flag(TIF_X32))						\
 	ARCH_DLINFO_X32;						\
 else									\
-	ARCH_DLINFO_IA32
+	ARCH_DLINFO_IA32_ORIG
 
 #define COMPAT_ELF_ET_DYN_BASE	(TASK_UNMAPPED_BASE + 0x1000000)
 

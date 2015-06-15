@@ -801,6 +801,7 @@ deps_config := \
 	drivers/base/Kconfig \
 	drivers/amba/Kconfig \
 	drivers/Kconfig \
+	kernel/Kconfig.kml \
 	drivers/nfc/st21nfcb/Kconfig \
 	drivers/nfc/st21nfca/Kconfig \
 	drivers/nfc/nfcmrvl/Kconfig \

@@ -50,6 +50,7 @@ deps_net/core/dst.o := \
   arch/x86/include/asm/ptrace.h \
     $(wildcard include/config/x86/debugctlmsr.h) \
   arch/x86/include/asm/segment.h \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/cc/stackprotector.h) \
     $(wildcard include/config/tracing.h) \
     $(wildcard include/config/x86/32/lazy/gs.h) \

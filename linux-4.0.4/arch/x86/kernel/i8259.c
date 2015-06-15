@@ -366,6 +366,44 @@ static void init_8259A(int auto_eoi)
 	raw_spin_unlock_irqrestore(&i8259A_lock, flags);
 }
 
+#if defined(CONFIG_KERNEL_MODE_LINUX) && defined(CONFIG_X86_32)
+
+static inline unsigned long get_ISR(void)
+{
+	unsigned vl;
+	unsigned vh;
+
+	outb(0x0B, PIC_MASTER_CMD);
+	vl = inb(PIC_MASTER_CMD);
+	outb(0x0A, PIC_MASTER_CMD);
+
+	outb(0x0B, PIC_SLAVE_CMD);
+	vh = inb(PIC_SLAVE_CMD);
+	outb(0x0A, PIC_SLAVE_CMD);
+
+	return ((vh << 8) & 0x0000ff00) | (vl & 0x000000ff);
+}
+
+void i8259A_test_ISR_and_handle_interrupt(void)
+{
+	int i;
+	unsigned long isr;
+
+	isr = get_ISR();
+
+	for (i = 0; i < 16; i++) {
+		if (i == 2) {
+			continue;
+		}
+
+		if (isr & (1 << i)) {
+			handle_interrupt_manually(FIRST_EXTERNAL_VECTOR + i);
+		}
+	}
+}
+
+#endif
+
 /*
  * make i8259 a driver so that we can select pic functions at run time. the goal
  * is to make x86 binary compatible among pc compatible and non-pc compatible

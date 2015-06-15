@@ -122,6 +122,10 @@ static inline struct thread_info *current_thread_info(void)
 /* true if poll_idle() is polling TIF_NEED_RESCHED */
 #define TIF_POLLING_NRFLAG	16
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+#define TIF_KU			31
+#endif
+
 #define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
 #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
 #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
@@ -130,6 +134,10 @@ static inline struct thread_info *current_thread_info(void)
 #define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
 #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
 #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+
+#ifdef CONFIG_KERNEL_MODE_LINUX
+#define _TIF_KU			(1 << TIF_KU)
+#endif
 
 /* work to do in syscall trace */
 #define _TIF_WORK_SYSCALL_MASK  (_TIF_SYSCALL_TRACE | _TIF_SINGLESTEP | \

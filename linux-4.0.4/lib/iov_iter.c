@@ -322,7 +322,11 @@ void iov_iter_init(struct iov_iter *i, int direction,
 			size_t count)
 {
 	/* It will get better.  Eventually... */
+#ifndef CONFIG_KERNEL_MODE_LINUX
 	if (segment_eq(get_fs(), KERNEL_DS)) {
+#else
+	if (segment_eq(get_fs(), KERNEL_DS) && !test_thread_flag(TIF_KU)) {
+#endif
 		direction |= ITER_KVEC;
 		i->type = direction;
 		i->kvec = (struct kvec *)iov;

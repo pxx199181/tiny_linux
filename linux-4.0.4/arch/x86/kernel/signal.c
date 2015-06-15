@@ -57,9 +57,48 @@
 	regs->seg = GET_SEG(seg);			\
 } while (0)
 
+#ifndef CONFIG_KERNEL_MODE_LINUX
+
 #define COPY_SEG_CPL3(seg)	do {			\
 	regs->seg = GET_SEG(seg) | 3;			\
 } while (0)
+
+#define COPY_CS_CPL3 COPY_SEG_CPL3(cs)
+#define COPY_SS_CPL3 COPY_SEG_CPL3(ss)
+
+#else /* !CONFIG_KERNEL_MODE_LINUX */
+
+#ifdef CONFIG_X86_32
+
+#define COPY_CS_CPL3	do {				\
+	unsigned long tmp;				\
+	unsigned long mask;				\
+	get_user_ex(tmp, &sc->xcs);			\
+	mask = (regs->cs == __KU_CS_EXCEPTION) ? 0 : (regs->cs & 3);	\
+	regs->cs = tmp | mask;				\
+} while (0)
+
+#define COPY_SS_CPL3	do {				\
+	unsigned short tmp;				\
+	unsigned long mask;				\
+	get_user_ex(tmp, &sc->ss);			\
+	mask = (regs->cs == __KU_CS_EXCEPTION) ? 0 : (regs->cs & 3);	\
+	regs->ss = tmp | mask;				\
+} while (0)
+
+#else /* !CONFIG_X86_32 */
+
+#define COPY_CS_CPL3 do {				\
+	if (test_thread_flag(TIF_KU)) {			\
+		regs->cs = __KU_CS;			\
+	} else {					\
+		regs->cs = GET_SEG(cs) | 3;		\
+	}						\
+} while (0)
+
+#endif
+
+#endif
 
 int restore_sigcontext(struct pt_regs *regs, struct sigcontext __user *sc,
 		       unsigned long *pax)
@@ -95,13 +134,13 @@ int restore_sigcontext(struct pt_regs *regs, struct sigcontext __user *sc,
 #endif /* CONFIG_X86_64 */
 
 #ifdef CONFIG_X86_32
-		COPY_SEG_CPL3(cs);
-		COPY_SEG_CPL3(ss);
+		COPY_CS_CPL3;
+		COPY_SS_CPL3;
 #else /* !CONFIG_X86_32 */
 		/* Kernel saves and restores only the CS segment register on signals,
 		 * which is the bare minimum needed to allow mixed 32/64-bit code.
 		 * App's signal handler can save/restore other segments if needed. */
-		COPY_SEG_CPL3(cs);
+		COPY_CS_CPL3;
 #endif /* CONFIG_X86_32 */
 
 		get_user_ex(tmpflags, &sc->flags);
@@ -155,7 +194,11 @@ int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
 		put_user_ex(current->thread.error_code, &sc->err);
 		put_user_ex(regs->ip, &sc->ip);
 #ifdef CONFIG_X86_32
+#ifndef CONFIG_KERNEL_MODE_LINUX
 		put_user_ex(regs->cs, (unsigned int __user *)&sc->cs);
+#else
+		put_user_ex(regs->cs, &sc->xcs);
+#endif
 		put_user_ex(regs->flags, &sc->flags);
 		put_user_ex(regs->sp, &sc->sp_at_signal);
 		put_user_ex(regs->ss, (unsigned int __user *)&sc->ss);
@@ -218,6 +261,9 @@ get_sigframe(struct k_sigaction *ka, struct pt_regs *regs, size_t frame_size,
 				sp = current->sas_ss_sp + current->sas_ss_size;
 		} else if (config_enabled(CONFIG_X86_32) &&
 			   (regs->ss & 0xffff) != __USER_DS &&
+#ifdef CONFIG_KERNEL_MODE_LINUX
+			   (regs->sp > TASK_SIZE) &&
+#endif
 			   !(ka->sa.sa_flags & SA_RESTORER) &&
 			   ka->sa.sa_restorer) {
 				/* This is the legacy signal stack switching. */
@@ -271,6 +317,11 @@ static const struct {
 	0
 };
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+extern void kml_sigreturn_shortcut(void);
+extern void kml_rt_sigreturn_shortcut(void);
+#endif
+
 static int
 __setup_frame(int sig, struct ksignal *ksig, sigset_t *set,
 	      struct pt_regs *regs)
@@ -302,7 +353,16 @@ __setup_frame(int sig, struct ksignal *ksig, sigset_t *set,
 			selected_vdso32->sym___kernel_sigreturn;
 	else
 		restorer = &frame->retcode;
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	if (kernel_mode_user_process(regs->cs)) {
+		restorer = (void *) kml_sigreturn_shortcut;
+	}
+#endif
+#ifndef CONFIG_KERNEL_MODE_LINUX
 	if (ksig->ka.sa.sa_flags & SA_RESTORER)
+#else
+	if ((ksig->ka.sa.sa_flags & SA_RESTORER) && (!kernel_mode_user_process(regs->cs)))
+#endif
 		restorer = ksig->ka.sa.sa_restorer;
 
 	/* Set up to return from userspace.  */
@@ -327,10 +387,26 @@ __setup_frame(int sig, struct ksignal *ksig, sigset_t *set,
 	regs->dx = 0;
 	regs->cx = 0;
 
+#ifndef CONFIG_KERNEL_MODE_LINUX
 	regs->ds = __USER_DS;
 	regs->es = __USER_DS;
 	regs->ss = __USER_DS;
 	regs->cs = __USER_CS;
+#else
+	if (kernel_mode_user_process(regs->cs)) {
+		set_fs(KERNEL_DS);
+		regs->ds = __USER_DS;
+		regs->es = __USER_DS;
+		regs->ss = __KERNEL_DS;
+		regs->cs = __KU_CS_EXCEPTION;
+	} else {
+		set_fs(USER_DS);
+		regs->ds = __USER_DS;
+		regs->es = __USER_DS;
+		regs->ss = __USER_DS;
+		regs->cs = __USER_CS;
+	}
+#endif
 
 	return 0;
 }
@@ -362,9 +438,22 @@ static int __setup_rt_frame(int sig, struct ksignal *ksig,
 		save_altstack_ex(&frame->uc.uc_stack, regs->sp);
 
 		/* Set up to return from userspace.  */
+#ifndef CONFIG_KERNEL_MODE_LINUX
 		restorer = current->mm->context.vdso +
 			selected_vdso32->sym___kernel_rt_sigreturn;
+#else
+		if (!kernel_mode_user_process(regs->cs)) {
+			restorer = current->mm->context.vdso +
+				selected_vdso32->sym___kernel_rt_sigreturn;
+		} else {
+			restorer = (void *) kml_rt_sigreturn_shortcut;
+		}
+#endif
+#ifndef CONFIG_KERNEL_MODE_LINUX
 		if (ksig->ka.sa.sa_flags & SA_RESTORER)
+#else
+		if ((ksig->ka.sa.sa_flags & SA_RESTORER) && (!kernel_mode_user_process(regs->cs)))
+#endif
 			restorer = ksig->ka.sa.sa_restorer;
 		put_user_ex(restorer, &frame->pretcode);
 
@@ -393,10 +482,26 @@ static int __setup_rt_frame(int sig, struct ksignal *ksig,
 	regs->dx = (unsigned long)&frame->info;
 	regs->cx = (unsigned long)&frame->uc;
 
+#ifndef CONFIG_KERNEL_MODE_LINUX
 	regs->ds = __USER_DS;
 	regs->es = __USER_DS;
 	regs->ss = __USER_DS;
 	regs->cs = __USER_CS;
+#else
+	if (kernel_mode_user_process(regs->cs)) {
+		set_fs(KERNEL_DS);
+		regs->ds = __USER_DS;
+		regs->es = __USER_DS;
+		regs->ss = __KERNEL_DS;
+		regs->cs = __KU_CS_EXCEPTION;
+	} else {
+		set_fs(USER_DS);
+		regs->ds = __USER_DS;
+		regs->es = __USER_DS;
+		regs->ss = __USER_DS;
+		regs->cs = __USER_CS;
+	}
+#endif
 
 	return 0;
 }
@@ -459,7 +564,11 @@ static int __setup_rt_frame(int sig, struct ksignal *ksig,
 
 	/* Set up the CS register to run signal handlers in 64-bit mode,
 	   even if the handler happens to be interrupting 32-bit code. */
+#ifndef CONFIG_KERNEL_MODE_LINUX
 	regs->cs = __USER_CS;
+#else
+	regs->cs = test_thread_flag(TIF_KU) ? __KU_CS : __USER_CS;
+#endif
 
 	return 0;
 }

@@ -26,6 +26,8 @@ deps_arch/x86/vdso/vdso32/int80.o := \
   arch/x86/include/generated/uapi/asm/unistd_32.h \
   arch/x86/include/asm/asm-offsets.h \
   include/generated/asm-offsets.h \
+  arch/x86/vdso/vdso32/kml.S \
+    $(wildcard include/config/kernel/mode/linux.h) \
 
 arch/x86/vdso/vdso32/int80.o: $(deps_arch/x86/vdso/vdso32/int80.o)
 

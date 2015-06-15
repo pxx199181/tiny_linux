@@ -91,6 +91,84 @@ ENDPROC(native_usergs_sysret64)
 #endif
 .endm
 
+#ifndef CONFIG_KERNEL_MODE_LINUX
+
+#define KML_SWITCH_STACK
+#define KML_RESTORE_CS
+
+#else
+
+#define KML_SWITCH_STACK call kml_switch_stack
+#define KML_RESTORE_CS kml_restore_cs
+
+/* XXX : copy-and-pasted from "asm/processor.h" */
+#define TASK_SIZE       (0x800000000000)
+
+#define KML_RBP_RAX 0
+#define KML_RBP_RBP 8
+#define KML_RBP_RA 16
+#define KML_RBP_ERROR_CODE 24
+#define KML_RBP_RIP 32
+#define KML_RBP_CS 40
+#define KML_RBP_RFLAGS 48
+#define KML_RBP_RSP 56
+#define KML_RBP_SS 64
+
+#define KML_TSS_RSP0 4
+#define KML_STACK_SIZE (8*16)
+#define KML_RBP_TSS_RSP0 (KML_TSS_RSP0 - (TSS_kml_stack + KML_STACK_SIZE - (8*9)))
+
+ENTRY(kml_switch_stack)
+	pushq %rbp
+	pushq %rax
+	movq %rsp, %rbp
+
+	/* set %rsp and mark kernel-mode user process */
+
+	testq $0x03, KML_RBP_CS(%rbp)	# from user-mode?
+	jnz 2f
+
+	# from kernel-mode
+	movq $(TASK_SIZE), %rax
+	cmpq %rax, KML_RBP_RSP(%rbp)	# from kernel-mode user process?
+	jbe 1f
+
+	# from kernel context (align %rsp)
+	movq KML_RBP_RSP(%rbp), %rax
+	andq $~0x0f, %rax
+	movq %rax, %rsp
+	jmp 3f
+1:
+	# from kernel-mode user process
+	orl $0x7fff0003, KML_RBP_CS(%rbp)
+
+2:	# from user-mode
+	movq KML_RBP_TSS_RSP0(%rbp), %rsp
+3:
+	pushq KML_RBP_SS(%rbp)
+	pushq KML_RBP_RSP(%rbp)
+	pushq KML_RBP_RFLAGS(%rbp)
+	pushq KML_RBP_CS(%rbp)
+	pushq KML_RBP_RIP(%rbp)
+	pushq KML_RBP_ERROR_CODE(%rbp)
+	pushq KML_RBP_RA(%rbp)
+
+	movq KML_RBP_RAX(%rbp), %rax		# restore %rbp
+	movq KML_RBP_RBP(%rbp), %rbp		# restore %rbp
+
+	ret
+
+
+
+	.macro kml_restore_cs
+	testl $0x7fff0000, 8(%rsp)	# from kernel-mode user process?
+	jz 1f
+	andl $0x0000fffc, 8(%rsp)
+1:
+	.endm
+
+#endif
+	
 /*
  * When dynamic function tracer is enabled it will add a breakpoint
  * to all locations that it is about to modify, sync CPUs, update
@@ -141,8 +219,20 @@ ENDPROC(native_usergs_sysret64)
 	.macro FIXUP_TOP_OF_STACK tmp offset=0
 	movq PER_CPU_VAR(old_rsp),\tmp
 	movq \tmp,RSP+\offset(%rsp)
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	GET_THREAD_INFO(\tmp)
+	bt $TIF_KU,TI_flags(\tmp)
+	jnc 1f
+	movq $__KERNEL_DS,SS+\offset(%rsp)
+	movq $__KU_CS,CS+\offset(%rsp)
+	jmp 2f
+1:
+#endif
 	movq $__USER_DS,SS+\offset(%rsp)
 	movq $__USER_CS,CS+\offset(%rsp)
+#ifdef CONFIG_KERNEL_MODE_LINUX
+2:
+#endif
 	movq RIP+\offset(%rsp),\tmp  /* get rip */
 	movq \tmp,RCX+\offset(%rsp)  /* copy it to rcx as sysret would do */
 	movq R11+\offset(%rsp),\tmp  /* get eflags */
@@ -321,6 +411,29 @@ END(ret_from_fork)
  * with them due to bugs in both AMD and Intel CPUs.
  */
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+ENTRY(kml_call_entry)
+	leaq	kml_call_entry_return(%rip),%rcx
+	pushf
+	popq	%r11
+	cli
+	jmp	kml_call
+kml_call_entry_retry:
+	.byte 0xeb
+	.byte 0xee
+	/* == jmpb kml_call_entry */
+kml_call_entry_return:
+	ret
+
+ENTRY(kml_call)
+	movq	%rsp,PER_CPU_VAR(old_rsp)
+	movq	PER_CPU_VAR(kernel_stack),%rsp
+
+	sti
+
+	jmp	system_call_sub
+#endif
+
 ENTRY(system_call)
 	CFI_STARTPROC	simple
 	CFI_SIGNAL_FRAME
@@ -342,6 +455,9 @@ GLOBAL(system_call_after_swapgs)
 	 * and short:
 	 */
 	ENABLE_INTERRUPTS(CLBR_NONE)
+#ifdef CONFIG_KERNEL_MODE_LINUX
+system_call_sub:
+#endif
 	SAVE_ARGS 8, 0, rax_enosys=1
 	movq_cfi rax,(ORIG_RAX-ARGOFFSET)
 	movq  %rcx,RIP-ARGOFFSET(%rsp)
@@ -384,6 +500,10 @@ ret_from_sys_call:
 	 * sysretq will re-enable interrupts:
 	 */
 	TRACE_IRQS_ON
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	bt	$TIF_KU,TI_flags+THREAD_INFO(%rsp,RIP-ARGOFFSET)
+	jc	sysret_ku
+#endif
 	movq RIP-ARGOFFSET(%rsp),%rcx
 	CFI_REGISTER	rip,rcx
 	RESTORE_ARGS 1,-ARG_SKIP,0
@@ -392,6 +512,17 @@ ret_from_sys_call:
 	USERGS_SYSRET64
 
 	CFI_RESTORE_STATE
+
+#ifdef CONFIG_KERNEL_MODE_LINUX
+sysret_ku:
+	movq RIP-ARGOFFSET(%rsp),%rcx
+	RESTORE_ARGS 1,-ARG_SKIP,0
+	movq	PER_CPU_VAR(old_rsp), %rsp
+	/* swapgs is not needed */
+	pushq %r11
+	popfq
+	jmp *%rcx
+#endif
 
 int_ret_from_sys_call_fixup:
 	FIXUP_TOP_OF_STACK %r11, -ARGOFFSET
@@ -669,6 +800,7 @@ END(interrupt)
 
 /* 0(%rsp): ~(interrupt number) */
 	.macro interrupt func
+	KML_SWITCH_STACK
 	/* reserve pt_regs for scratch regs and rbp */
 	subq $ORIG_RAX-RBP, %rsp
 	CFI_ADJUST_CFA_OFFSET ORIG_RAX-RBP
@@ -693,6 +825,10 @@ END(interrupt)
 	leaq -RBP(%rsp),%rdi	/* arg1 for handler */
 	testl $3, CS-RBP(%rsi)
 	je 1f
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	testl $0x7fff0000, CS(%rdi)
+	jnz 1f
+#endif
 	SWAPGS
 	/*
 	 * irq_count is used to check if a CPU is already on an interrupt stack
@@ -765,6 +901,10 @@ retint_swapgs:		/* return to user-space */
 	 */
 	DISABLE_INTERRUPTS(CLBR_ANY)
 	TRACE_IRQS_IRETQ
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	testl $0x7fff0000, CS-ARGOFFSET(%rsp)
+	jnz restore_args
+#endif
 
 	/*
 	 * Try to use SYSRET instead of IRET if we're returning to
@@ -844,6 +984,7 @@ retint_restore_args:	/* return to kernel space */
 	TRACE_IRQS_IRETQ
 restore_args:
 	RESTORE_ARGS 1,8,1
+	KML_RESTORE_CS
 
 irq_return:
 	INTERRUPT_RETURN
@@ -1046,6 +1187,10 @@ ENTRY(\sym)
 	pushq_cfi $-1			/* ORIG_RAX: no syscall to restart */
 	.endif
 
+	.if \shift_ist == -1
+	KML_SWITCH_STACK
+	.endif
+
 	subq $ORIG_RAX-R15, %rsp
 	CFI_ADJUST_CFA_OFFSET ORIG_RAX-R15
 
@@ -1054,6 +1199,16 @@ ENTRY(\sym)
 	CFI_REMEMBER_STATE
 	testl $3, CS(%rsp)		/* If coming from userspace, switch */
 	jnz 1f				/* stacks. */
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	pushq %rax
+	movq $(TASK_SIZE), %rax
+	cmpq %rax, RSP-8(%rsp)
+	popq %rax
+	ja 2f
+	orl $0x7fff0003, CS(%rsp)
+	jmp 1f
+2:
+#endif
 	.endif
 	call save_paranoid
 	.else
@@ -1347,12 +1502,17 @@ ENTRY(paranoid_exit)
 	testl %ebx,%ebx				/* swapgs needed? */
 	jnz paranoid_restore
 	TRACE_IRQS_IRETQ 0
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	testl $0x7fff0000,CS(%rsp)
+	jnz   paranoid_restore
+#endif
 	SWAPGS_UNSAFE_STACK
 	RESTORE_ALL 8
 	INTERRUPT_RETURN
 paranoid_restore:
 	TRACE_IRQS_IRETQ_DEBUG 0
 	RESTORE_ALL 8
+	KML_RESTORE_CS
 	INTERRUPT_RETURN
 	CFI_ENDPROC
 END(paranoid_exit)
@@ -1385,6 +1545,10 @@ ENTRY(error_entry)
 	testl $3,CS+8(%rsp)
 	je error_kernelspace
 error_swapgs:
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	testl $0x7fff0000,CS+8(%rsp)
+	jnz error_sti
+#endif
 	SWAPGS
 error_sti:
 	TRACE_IRQS_OFF

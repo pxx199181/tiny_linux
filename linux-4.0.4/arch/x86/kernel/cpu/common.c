@@ -278,8 +278,13 @@ __setup("nosmep", setup_disable_smep);
 
 static __always_inline void setup_smep(struct cpuinfo_x86 *c)
 {
-	if (cpu_has(c, X86_FEATURE_SMEP))
-		cr4_set_bits(X86_CR4_SMEP);
+	if (cpu_has(c, X86_FEATURE_SMEP)) {
+		if (config_enabled(CONFIG_KERNEL_MODE_LINUX)) {
+			printk(KERN_INFO "SMEP is not enabled because it is not compatible with Kernel Mode Linux.\n");
+		} else {
+			cr4_set_bits(X86_CR4_SMEP);
+		}
+	}
 }
 
 static __init int setup_disable_smap(char *arg)
@@ -1351,7 +1356,13 @@ void cpu_init(void)
 		for (v = 0; v < N_EXCEPTION_STACKS; v++) {
 			estacks += exception_stack_sizes[v];
 			oist->ist[v] = t->x86_tss.ist[v] =
+#ifndef CONFIG_KERNEL_MODE_LINUX
 					(unsigned long)estacks;
+#else
+					(v + 1 == KML_STACK) ?
+						(unsigned long)(t->kml_stack + KML_STACK_SIZE)
+						: (unsigned long)estacks;
+#endif
 			if (v == DEBUG_STACK-1)
 				per_cpu(debug_stack_addr, cpu) = (unsigned long)estacks;
 		}
@@ -1393,6 +1404,10 @@ void cpu_init(void)
 	struct task_struct *curr = current;
 	struct tss_struct *t = &per_cpu(init_tss, cpu);
 	struct thread_struct *thread = &curr->thread;
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	struct tss_struct* doublefault_tss = &per_cpu(doublefault_tsses, cpu);
+	struct tss_struct* nmi_tss = &per_cpu(nmi_tsses, cpu);
+#endif
 
 	wait_for_master_cpu(cpu);
 
@@ -1427,9 +1442,16 @@ void cpu_init(void)
 
 	t->x86_tss.io_bitmap_base = offsetof(struct tss_struct, io_bitmap);
 
+#ifndef CONFIG_KERNEL_MODE_LINUX
 #ifdef CONFIG_DOUBLEFAULT
 	/* Set up doublefault TSS pointer in the GDT */
 	__set_tss_desc(cpu, GDT_ENTRY_DOUBLEFAULT_TSS, &doublefault_tss);
+#endif
+#else
+	init_doublefault_tss(cpu);
+	init_nmi_tss(cpu);
+	__set_tss_desc(cpu, GDT_ENTRY_DOUBLEFAULT_TSS, doublefault_tss);
+	__set_tss_desc(cpu, GDT_ENTRY_NMI_TSS, nmi_tss);
 #endif
 
 	clear_all_debug_regs();

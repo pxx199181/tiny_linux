@@ -146,7 +146,9 @@ struct cpuinfo_x86 {
 extern struct cpuinfo_x86	boot_cpu_data;
 extern struct cpuinfo_x86	new_cpu_data;
 
+#ifndef CONFIG_KERNEL_MODE_LINUX
 extern struct tss_struct	doublefault_tss;
+#endif
 extern __u32			cpu_caps_cleared[NCAPINTS];
 extern __u32			cpu_caps_set[NCAPINTS];
 
@@ -196,11 +198,6 @@ static inline void native_cpuid(unsigned int *eax, unsigned int *ebx,
 	      "=d" (*edx)
 	    : "0" (*eax), "2" (*ecx)
 	    : "memory");
-}
-
-static inline void load_cr3(pgd_t *pgdir)
-{
-	write_cr3(__pa(pgdir));
 }
 
 #ifdef CONFIG_X86_32
@@ -280,9 +277,24 @@ struct tss_struct {
 	 */
 	unsigned long		stack[64];
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+#define KML_STACK_SIZE (8*16)
+	char			kml_stack[KML_STACK_SIZE] __attribute__ ((aligned (16)));
+#endif
 } ____cacheline_aligned;
 
 DECLARE_PER_CPU_SHARED_ALIGNED(struct tss_struct, init_tss);
+
+#ifdef CONFIG_KERNEL_MODE_LINUX
+DECLARE_PER_CPU(struct tss_struct, doublefault_tsses);
+DECLARE_PER_CPU(struct tss_struct, nmi_tsses);
+DECLARE_PER_CPU(struct dft_stack_struct, dft_stacks);
+DECLARE_PER_CPU(struct nmi_stack_struct, nmi_stacks);
+DECLARE_PER_CPU(unsigned long, esp0);
+DECLARE_PER_CPU(unsigned long, unused);
+extern void init_doublefault_tss(int);
+extern void init_nmi_tss(int);
+#endif
 
 /*
  * Save the original ist values for checking stack pointers during debugging
@@ -525,6 +537,23 @@ struct thread_struct {
 	unsigned char fpu_counter;
 };
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+struct dft_stack_struct {
+	unsigned long error_code;
+	struct tss_struct* this_tss;
+	struct tss_struct* normal_tss;
+};
+
+struct nmi_stack_struct {
+	/* This __pad field may be used in NMI handler (see entry.S) */
+	unsigned long __pad[1];
+	struct tss_struct* this_tss;
+	struct tss_struct* normal_tss;
+	void* dft_tss_desc;
+	int need_nmi;
+};
+#endif
+
 /*
  * Set IOPL bits in EFLAGS from given mask
  */
@@ -549,6 +578,9 @@ native_load_sp0(struct tss_struct *tss, struct thread_struct *thread)
 {
 	tss->x86_tss.sp0 = thread->sp0;
 #ifdef CONFIG_X86_32
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	this_cpu_write_4(esp0, thread->sp0);
+#endif
 	/* Only happens when SEP is enabled, no need to test "SEP"arately: */
 	if (unlikely(tss->x86_tss.ss1 != thread->sysenter_cs)) {
 		tss->x86_tss.ss1 = thread->sysenter_cs;
@@ -912,6 +944,11 @@ DECLARE_PER_CPU(unsigned long, old_rsp);
 extern void start_thread(struct pt_regs *regs, unsigned long new_ip,
 					       unsigned long new_sp);
 
+#ifdef CONFIG_KERNEL_MODE_LINUX
+extern void start_kernel_thread(struct pt_regs *regs, unsigned long new_ip,
+						      unsigned long new_sp);
+#endif
+
 /*
  * This decides where the kernel will search for a free chunk of vm
  * space during mmap's.
@@ -961,6 +998,24 @@ static inline uint32_t hypervisor_cpuid_base(const char *sig, uint32_t leaves)
 
 	return 0;
 }
+
+#if defined(CONFIG_KERNEL_MODE_LINUX) && defined(CONFIG_X86_32)
+#define load_cr3(pgdir) \
+do {									\
+	int cpu = smp_processor_id();					\
+	unsigned long pa_pgdir = __pa(pgdir);				\
+									\
+	per_cpu(init_tss, cpu)		.x86_tss.__cr3 = pa_pgdir;	\
+	per_cpu(doublefault_tsses, cpu)	.x86_tss.__cr3 = pa_pgdir;	\
+	per_cpu(nmi_tsses, cpu)		.x86_tss.__cr3 = pa_pgdir;	\
+	write_cr3(pa_pgdir);						\
+} while (0)
+#else
+static inline void load_cr3(pgd_t *pgdir)
+{
+	write_cr3(__pa(pgdir));
+}
+#endif
 
 extern unsigned long arch_align_stack(unsigned long sp);
 extern void free_init_pages(char *what, unsigned long begin, unsigned long end);

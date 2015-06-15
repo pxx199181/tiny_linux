@@ -3,6 +3,8 @@ cmd_arch/x86/vdso/vdso32/vdso32.lds := gcc -E -Wp,-MD,arch/x86/vdso/vdso32/.vdso
 source_arch/x86/vdso/vdso32/vdso32.lds := arch/x86/vdso/vdso32/vdso32.lds.S
 
 deps_arch/x86/vdso/vdso32/vdso32.lds := \
+    $(wildcard include/config/kernel/mode/linux.h) \
+    $(wildcard include/config/x86/32.h) \
   arch/x86/include/asm/page.h \
     $(wildcard include/config/x86/64.h) \
   include/linux/types.h \
@@ -41,7 +43,6 @@ deps_arch/x86/vdso/vdso32/vdso32.lds := \
   arch/x86/vdso/vdso32/../vdso-layout.lds.S \
   arch/x86/include/asm/vdso.h \
     $(wildcard include/config/x86/x32.h) \
-    $(wildcard include/config/x86/32.h) \
     $(wildcard include/config/compat.h) \
   include/linux/linkage.h \
   include/linux/compiler.h \

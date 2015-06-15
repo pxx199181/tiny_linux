@@ -242,6 +242,9 @@ start_thread_common(struct pt_regs *regs, unsigned long new_ip,
 	regs->cs		= _cs;
 	regs->ss		= _ss;
 	regs->flags		= X86_EFLAGS_IF;
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	clear_thread_flag(TIF_KU);
+#endif
 }
 
 void
@@ -259,6 +262,34 @@ void start_thread_ia32(struct pt_regs *regs, u32 new_ip, u32 new_sp)
 			    ? __USER_CS : __USER32_CS,
 			    __USER_DS, __USER_DS);
 }
+#endif
+
+#ifdef CONFIG_KERNEL_MODE_LINUX
+void
+start_kernel_thread(struct pt_regs *regs, unsigned long new_ip, unsigned long new_sp)
+{
+	int cpu = smp_processor_id();
+        loadsegment(fs, 0);
+        loadsegment(es, 0);
+        loadsegment(ds, 0);
+	load_gs_index(0);
+	current->thread.usersp	= new_sp;
+	regs->ip		= new_ip;
+	regs->sp		= new_sp;
+	this_cpu_write(old_rsp, new_sp);
+	regs->cs		= __KU_CS;
+	regs->ss		= __KERNEL_DS;
+	regs->flags		= X86_EFLAGS_IF;
+
+        if (cpu_has_smap) {
+                regs->flags     |= X86_EFLAGS_AC;
+        }
+
+	set_fs(KERNEL_DS);
+	set_thread_flag(TIF_KU);
+	wrmsrl(MSR_KERNEL_GS_BASE, (unsigned long)per_cpu(irq_stack_union.gs_base, cpu));
+}
+EXPORT_SYMBOL_GPL(start_kernel_thread);
 #endif
 
 /*
@@ -392,6 +423,11 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
 		if (gsindex)
 			prev->gs = 0;
 	}
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	if (test_ti_thread_flag(task_thread_info(next_p), TIF_KU)) {
+		next->gs = (unsigned long)per_cpu(irq_stack_union.gs_base, cpu);
+	}
+#endif
 	if (next->gs)
 		wrmsrl(MSR_KERNEL_GS_BASE, next->gs);
 	prev->gsindex = gsindex;

@@ -40,6 +40,7 @@ deps_arch/x86/kernel/vmlinux.lds := \
   arch/x86/include/asm/asm-offsets.h \
   include/generated/asm-offsets.h \
   arch/x86/include/asm/thread_info.h \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/ia32/emulation.h) \
   include/linux/compiler.h \
     $(wildcard include/config/sparse/rcu/pointer.h) \

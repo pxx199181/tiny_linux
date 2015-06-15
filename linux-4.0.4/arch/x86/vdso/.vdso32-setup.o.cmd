@@ -6,6 +6,7 @@ deps_arch/x86/vdso/vdso32-setup.o := \
     $(wildcard include/config/compat/vdso.h) \
     $(wildcard include/config/x86/32.h) \
     $(wildcard include/config/x86/64.h) \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/compat.h) \
     $(wildcard include/config/sysctl.h) \
   include/linux/init.h \

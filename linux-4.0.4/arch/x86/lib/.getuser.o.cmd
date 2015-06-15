@@ -54,6 +54,7 @@ deps_arch/x86/lib/getuser.o := \
   arch/x86/include/asm/asm-offsets.h \
   include/generated/asm-offsets.h \
   arch/x86/include/asm/thread_info.h \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/ia32/emulation.h) \
   arch/x86/include/asm/page.h \
   arch/x86/include/asm/page_32.h \

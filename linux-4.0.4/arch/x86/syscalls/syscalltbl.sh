@@ -4,7 +4,7 @@ in="$1"
 out="$2"
 
 grep '^[0-9]' "$in" | sort -n | (
-    while read nr abi name entry compat; do
+    while read nr abi name num_args req_ptregs entry compat; do
 	abi=`echo "$abi" | tr '[a-z]' '[A-Z]'`
 	if [ -n "$compat" ]; then
 	    echo "__SYSCALL_${abi}($nr, $entry, $compat)"

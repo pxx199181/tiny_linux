@@ -23,6 +23,7 @@ deps_arch/x86/realmode/rm/reboot.o := \
     $(wildcard include/config/x86/32.h) \
     $(wildcard include/config/x86/alignment/16.h) \
   arch/x86/include/asm/segment.h \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/smp.h) \
     $(wildcard include/config/cc/stackprotector.h) \
     $(wildcard include/config/paravirt.h) \

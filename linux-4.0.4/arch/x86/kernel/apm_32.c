@@ -605,9 +605,11 @@ static long __apm_bios_call(void *_call)
 	struct desc_struct	save_desc_40;
 	struct desc_struct	*gdt;
 	struct apm_bios_call	*call = _call;
+	NMI_DECLS_GS
 
 	cpu = get_cpu();
 	BUG_ON(cpu != 0);
+	NMI_SAVE_GS;
 	gdt = get_cpu_gdt_table(cpu);
 	save_desc_40 = gdt[0x40 / 8];
 	gdt[0x40 / 8] = bad_bios_desc;
@@ -620,6 +622,7 @@ static long __apm_bios_call(void *_call)
 	APM_DO_RESTORE_SEGS;
 	apm_irq_restore(flags);
 	gdt[0x40 / 8] = save_desc_40;
+	NMI_RESTORE_GS;
 	put_cpu();
 
 	return call->eax & 0xff;
@@ -681,9 +684,11 @@ static long __apm_bios_call_simple(void *_call)
 	struct desc_struct	save_desc_40;
 	struct desc_struct	*gdt;
 	struct apm_bios_call	*call = _call;
+	NMI_DECLS_GS
 
 	cpu = get_cpu();
 	BUG_ON(cpu != 0);
+	NMI_SAVE_GS;
 	gdt = get_cpu_gdt_table(cpu);
 	save_desc_40 = gdt[0x40 / 8];
 	gdt[0x40 / 8] = bad_bios_desc;
@@ -695,6 +700,7 @@ static long __apm_bios_call_simple(void *_call)
 	APM_DO_RESTORE_SEGS;
 	apm_irq_restore(flags);
 	gdt[0x40 / 8] = save_desc_40;
+	NMI_RESTORE_GS;
 	put_cpu();
 	return error;
 }

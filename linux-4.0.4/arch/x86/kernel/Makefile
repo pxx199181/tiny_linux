@@ -20,6 +20,20 @@ KASAN_SANITIZE_head$(BITS).o := n
 KASAN_SANITIZE_dumpstack.o := n
 KASAN_SANITIZE_dumpstack_$(BITS).o := n
 
+ifdef CONFIG_KERNEL_MODE_LINUX
+syscall32 := $(srctree)/arch/x86/syscalls/syscall_32.tbl
+kmlsystbl := $(srctree)/$(src)/kml_syscall_table_32.sh
+
+quiet_cmd_kmlsystbl = KML_SYSTBL  $@
+      cmd_kmlsystbl = $(CONFIG_SHELL) '$(kmlsystbl)' $< $@
+
+$(obj)/kml_syscall_table_32.S: $(syscall32) $(srctree)/$(src)/kml_syscall_table_maker_32.h $(kmlsystbl)
+	$(call if_changed,kmlsystbl)
+
+$(obj)/entry_32.o: $(obj)/entry_32.S $(obj)/kml_syscall_table_32.S
+	$(call if_changed,as_o_S)
+endif
+
 CFLAGS_irq.o := -I$(src)/../include/asm/trace
 
 obj-y			:= process_$(BITS).o signal.o entry_$(BITS).o
@@ -78,6 +92,7 @@ obj-$(CONFIG_CRASH_DUMP)	+= crash_dump_$(BITS).o
 obj-y				+= kprobes/
 obj-$(CONFIG_MODULES)		+= module.o
 obj-$(CONFIG_DOUBLEFAULT)	+= doublefault.o
+obj-$(CONFIG_KERNEL_MODE_LINUX)	+= task.o
 obj-$(CONFIG_KGDB)		+= kgdb.o
 obj-$(CONFIG_VM86)		+= vm86_32.o
 obj-$(CONFIG_EARLY_PRINTK)	+= early_printk.o

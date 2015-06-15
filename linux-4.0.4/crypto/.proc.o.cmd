@@ -43,6 +43,7 @@ deps_crypto/proc.o := \
     $(wildcard include/config/phys/addr/t/64bit.h) \
   arch/x86/include/asm/processor.h \
     $(wildcard include/config/x86/vsmp.h) \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/smp.h) \
     $(wildcard include/config/x86/64.h) \
     $(wildcard include/config/cc/stackprotector.h) \

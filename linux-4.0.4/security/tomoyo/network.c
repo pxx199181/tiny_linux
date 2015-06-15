@@ -608,7 +608,11 @@ static int tomoyo_check_unix_address(struct sockaddr *addr,
 static bool tomoyo_kernel_service(void)
 {
 	/* Nothing to do if I am a kernel service. */
+#ifndef CONFIG_KERNEL_MODE_LINUX
 	return segment_eq(get_fs(), KERNEL_DS);
+#else
+	return segment_eq(get_fs(), KERNEL_DS) && !test_thread_flag(TIF_KU);
+#endif
 }
 
 /**

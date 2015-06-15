@@ -3,6 +3,7 @@ cmd_init/do_mounts.o := gcc -Wp,-MD,init/.do_mounts.o.d  -nostdinc -isystem /usr
 source_init/do_mounts.o := init/do_mounts.c
 
 deps_init/do_mounts.o := \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/block.h) \
     $(wildcard include/config/debug/block/ext/devt.h) \
     $(wildcard include/config/root/nfs.h) \

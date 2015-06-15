@@ -60,6 +60,25 @@ __setup_param("vdso=", vdso_setup, vdso32_setup, 0);
 
 #endif	/* CONFIG_X86_64 */
 
+#if defined(CONFIG_KERNEL_MODE_LINUX) && defined(CONFIG_X86_32)
+extern const char kml_call_table;
+extern void __kernel_vsyscall_kml;
+
+static void __init kml_call_table_fixup(const struct vdso_image *image)
+{
+	void* p;
+	unsigned long* to_be_filled;
+
+	p = image->data + image->sym___kernel_vsyscall_kml;
+	to_be_filled = (unsigned long*)(p + 3);
+	*to_be_filled = (unsigned long)&kml_call_table;
+
+	return;
+}
+#else
+#define kml_call_table_fixup(B)
+#endif
+
 #if defined(CONFIG_X86_32) || defined(CONFIG_COMPAT)
 const struct vdso_image *selected_vdso32;
 #endif
@@ -75,6 +94,10 @@ int __init sysenter_setup(void)
 		selected_vdso32 = &vdso_image_32_sysenter;
 	else
 		selected_vdso32 = &vdso_image_32_int80;
+
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	kml_call_table_fixup(selected_vdso32);
+#endif
 
 	init_vdso_image(selected_vdso32);
 

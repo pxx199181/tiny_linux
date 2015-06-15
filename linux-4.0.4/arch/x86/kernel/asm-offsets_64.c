@@ -81,6 +81,9 @@ int main(void)
 #undef ENTRY
 
 	OFFSET(TSS_ist, tss_struct, x86_tss.ist);
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	OFFSET(TSS_kml_stack, tss_struct, kml_stack);
+#endif
 	BLANK();
 
 	DEFINE(__NR_syscall_max, sizeof(syscalls_64) - 1);

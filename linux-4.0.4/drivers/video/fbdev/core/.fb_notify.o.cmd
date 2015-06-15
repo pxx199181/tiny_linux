@@ -67,6 +67,7 @@ deps_drivers/video/fbdev/core/fb_notify.o := \
   arch/x86/include/asm/atomic.h \
   arch/x86/include/asm/processor.h \
     $(wildcard include/config/x86/vsmp.h) \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/smp.h) \
     $(wildcard include/config/cc/stackprotector.h) \
     $(wildcard include/config/paravirt.h) \

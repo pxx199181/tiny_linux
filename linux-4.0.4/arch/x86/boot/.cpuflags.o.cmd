@@ -56,6 +56,7 @@ deps_arch/x86/boot/cpuflags.o := \
   arch/x86/boot/cpuflags.h \
   arch/x86/include/asm/cpufeature.h \
     $(wildcard include/config/x86/feature/names.h) \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/x86/debug/static/cpu/has.h) \
   arch/x86/include/asm/disabled-features.h \
     $(wildcard include/config/x86/intel/mpx.h) \

@@ -246,7 +246,7 @@ foo:
 # 0 "" 2
 # 70 "arch/x86/kernel/asm-offsets_32.c" 1
 	
-->TSS_sysenter_sp0 $-8572 offsetof(struct tss_struct, x86_tss.sp0) - sizeof(struct tss_struct)	#
+->TSS_sysenter_sp0 $-8700 offsetof(struct tss_struct, x86_tss.sp0) - sizeof(struct tss_struct)	#
 # 0 "" 2
 # 90 "arch/x86/kernel/asm-offsets_32.c" 1
 	

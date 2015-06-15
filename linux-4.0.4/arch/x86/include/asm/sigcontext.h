@@ -20,7 +20,11 @@ struct sigcontext {
 	unsigned long trapno;
 	unsigned long err;
 	unsigned long ip;
+#ifndef CONFIG_KERNEL_MODE_LINUX
 	unsigned short cs, __csh;
+#else
+	unsigned long xcs;
+#endif
 	unsigned long flags;
 	unsigned long sp_at_signal;
 	unsigned short ss, __ssh;

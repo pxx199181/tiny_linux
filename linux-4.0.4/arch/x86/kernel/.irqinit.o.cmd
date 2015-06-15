@@ -10,6 +10,7 @@ deps_arch/x86/kernel/irqinit.o := \
     $(wildcard include/config/x86/mce/threshold.h) \
     $(wildcard include/config/have/kvm.h) \
     $(wildcard include/config/irq/work.h) \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/x86/32.h) \
   include/linux/linkage.h \
   include/linux/compiler.h \

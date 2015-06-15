@@ -32,6 +32,9 @@ VERSION
 		__kernel_vsyscall;
 		__kernel_sigreturn;
 		__kernel_rt_sigreturn;
+#if defined(CONFIG_KERNEL_MODE_LINUX) && defined(CONFIG_X86_32)
+		__kernel_vsyscall_kml;
+#endif
 	local: *;
 	};
 }

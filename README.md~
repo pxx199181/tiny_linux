@@ -96,3 +96,101 @@ ip route add default via 10.0.2.2
 		  文件夹下面， 保存了很多个config文件，每步都是一个阶段．
 
 		
+
+##第三次课前工作(kernel mode linux)：
+###１. 重新编译kernel (kernel mode linux)
+		1>．根据http://web.yl.is.s.u-tokyo.ac.jp/~tosh/kml/中的patch直接对前面的linux直接打进行修改，命令为:patch -p1 -d XX <kml.diff
+		  这样编译出来的kernel直接就是kernel mode linux, 按照url链接中的提示在trusted目录下面运行的程序直接就是内核态。
+		  　测试方法：
+		          1)．运行特权形式的程序，如带有关中断指令的程序，在其他目录下运行直接异常，但是在trusted目录下能够正常运行，
+		  　说明编译成功。
+		          ２)．利用time查看程序运行时间，发现在其他目录下既有内核态时间也有用户态时间，但是在trusted中却只有内核态时间，
+		  　说明编译成功。
+		  
+###２. 编译glibc
+		1>．成功编译这部分耗时比较长，主要是前面出现了好多问题，gcc的版本，gawk的版本等等之类的，最后成功编译成功是因为找了个
+		  ubuntu10.04的系统，因为它的glibc的就是2.11与目标很接近，所以直接用它：
+		1)．对glibc打上patch之后，直接编译通过，
+		2)．将其中的glibc.so.6链接到的so文件和ln-linux.so.2连接到的so文件拷贝出来，放到ramdisk中的lib目录下，
+		3)．为了让需要依赖libc动态库的程序正常执行，需要将连接关系做好，有两种方法：
+		  一是直接指定：按照http://web.yl.is.s.u-tokyo.ac.jp/~tosh/kml/中的方法，直接用/lib/ln-linux.so.2 --library-path /lib xx即可，
+		  二是设置好环境变量，将LD_LIBRARY_PATH指定为/lib即可，然后将ln-linux.so.2和libc.so.6的链接文件都放到/lib下即可。
+		  
+###３. 测试性能
+		1>．测试代码说明：编写了一个多进程的程序，起了200个子进程，然后循环打印，父进程等待所有子进程结束后打印总耗时。
+		2>．测试程序：编译两个版本的程序，一个需要libc，一个不需要。
+		3>．测试方法：分别在trusted目录外面和在trusted目录里面进程测试，发现耗时相差无几，而且大部分时间是在trusted外面的时间甚至。
+		  比里面的耗时更少，与原来的结论相矛盾，测试时候，我将所有的so文件和程序同时放在trusted里面或者外面，连接的时候也是手动指定
+		  出现这个结果还是比较差异的。
+	   代码如下：
+```
+#include<stdio.h>
+#include<unistd.h>
+#include<sys/types.h>
+#include<sys/wait.h>
+#include<signal.h>
+#include<sys/time.h>
+#define childCount 201
+int main()
+{
+	int i, j, k;
+	int pid_array[childCount];
+	int stat[childCount];
+	struct timeval start, end;
+	unsigned long timer;
+	gettimeofday(&start, NULL);
+	for (i = 0; i < childCount; i++)
+	{
+		pid_t pid = fork();
+		k = 0;
+		if (pid == 0)
+		{	
+			pid = getpid();
+			for (j = 0; j < 1000000; j++)
+			{
+				k += 3;
+				if (j % 5000 == 0)
+					printf("pid[%d] count = %d, k = %d\n", pid, j, k);
+			}
+				
+			return 0;
+		}
+		else if (pid > 0)
+		{
+			pid_array[i] = pid;
+		}
+	}
+	for (i = 0; i < childCount; i++)
+	{
+		waitpid(pid_array[i], &stat[i], 0);
+	}
+	gettimeofday(&end, NULL);
+	timer = 1000000 * (end.tv_sec - start.tv_sec) + (end.tv_usec  -start.tv_usec);
+	printf("time used:%lf ms\n", timer / 1000.0);
+	return 0;
+}
+```
+	   测试输出如下：
+	   	   [命令：]
+	   	   ![image](https://github.com/pxx199181/tiny_linux/result-pic/normal-cmd.png )
+	   	   [结果：]
+	   	   ![image](https://github.com/pxx199181/tiny_linux/result-pic/normal-result.png )
+	   	   [命令：]
+	   	   ![image](https://github.com/pxx199181/tiny_linux/result-pic/kernelmode-cmd.png )
+	   	   [结果：]
+	   	   ![image](https://github.com/pxx199181/tiny_linux/result-pic/kernelmode-result.png )
+	   	   
+###２. 出现的问题
+            1). glibc的编译必须的找个和2.11非常接近的系统，否则gcc和gawk存在很多问题，哪怕解决了可能还存在一些奇奇怪怪
+		  的小问题，当时这个上面花了很长时间，最后找了ubuntu10.04才直接成功。
+            2). 对于程序的动态库加载的问题，多查查资料就解决了
+            3). 最后的矛盾结果，出乎意料，是不是有什么地方出了问题，但是从结果来看他确实是内核态，耗时太多难道是因为进
+		  程的切换，想想内核态和用户态的切换与内核态和内核态之间的切换其实并没有太多的区别，我觉得所谓的减低切换的overhead
+		  应该是针对那种从用户态到内核态转换量比较大的才能体现出来吧，否则原来那个作者所打的patch会增加其overhead也说不定
+
+###３. 感受
+            编译glibc花了快一天的时间，查了好多奇葩问题，但是很多人都遇到了，解决方法也有很多。对于程序加载动态库方面确
+		 实理解更深刻了一些，但是对于最后的矛盾结果，我想了一些原因，但是感觉还是不充分，照常理确实切换的东西少了，我觉得
+		 要弄的更清楚，得去深入了解那个patch的真正所做的事情了。
+
+		

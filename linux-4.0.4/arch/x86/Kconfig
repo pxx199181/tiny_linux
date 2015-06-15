@@ -2580,6 +2580,10 @@ config PMC_ATOM
 
 source "net/Kconfig"
 
+if (X86_64 || X86_32) && !PARAVIRT && !CC_STACKPROTECTOR
+source "kernel/Kconfig.kml"
+endif
+
 source "drivers/Kconfig"
 
 source "drivers/firmware/Kconfig"

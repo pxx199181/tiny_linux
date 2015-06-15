@@ -42,6 +42,7 @@ deps_arch/x86/boot/pmjump.o := \
     $(wildcard include/config/vm86.h) \
   arch/x86/include/uapi/asm/processor-flags.h \
   arch/x86/include/asm/segment.h \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/smp.h) \
     $(wildcard include/config/cc/stackprotector.h) \
     $(wildcard include/config/paravirt.h) \

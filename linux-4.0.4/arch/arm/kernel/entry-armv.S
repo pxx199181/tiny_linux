@@ -1103,7 +1103,11 @@ vector_rst:
 	.long	__irq_invalid			@  c
 	.long	__irq_invalid			@  d
 	.long	__irq_invalid			@  e
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	.long	__irq_usr			@  f
+#else
 	.long	__irq_invalid			@  f
+#endif
 
 /*
  * Data abort dispatcher
@@ -1126,7 +1130,11 @@ vector_rst:
 	.long	__dabt_invalid			@  c
 	.long	__dabt_invalid			@  d
 	.long	__dabt_invalid			@  e
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	.long	__dabt_usr			@  f
+#else
 	.long	__dabt_invalid			@  f
+#endif
 
 /*
  * Prefetch abort dispatcher
@@ -1149,7 +1157,11 @@ vector_rst:
 	.long	__pabt_invalid			@  c
 	.long	__pabt_invalid			@  d
 	.long	__pabt_invalid			@  e
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	.long	__pabt_usr			@  f
+#else
 	.long	__pabt_invalid			@  f
+#endif
 
 /*
  * Undef instr entry dispatcher
@@ -1172,7 +1184,11 @@ vector_rst:
 	.long	__und_invalid			@  c
 	.long	__und_invalid			@  d
 	.long	__und_invalid			@  e
+#ifdef CONFIG_KERNEL_MODE_LINUX
+	.long	__und_usr			@  f
+#else
 	.long	__und_invalid			@  f
+#endif
 
 	.align	5
 

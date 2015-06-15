@@ -46,6 +46,7 @@ deps_arch/x86/realmode/rm/header.o := \
     $(wildcard include/config/page/offset.h) \
     $(wildcard include/config/x86/pae.h) \
   arch/x86/include/asm/segment.h \
+    $(wildcard include/config/kernel/mode/linux.h) \
     $(wildcard include/config/smp.h) \
     $(wildcard include/config/cc/stackprotector.h) \
     $(wildcard include/config/paravirt.h) \
