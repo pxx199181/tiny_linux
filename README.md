@@ -171,13 +171,13 @@ int main()
 }
 ```
 	   测试输出如下：
-[命令：]
+###命令:
 ![result-pi](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/normal-cmd.png)
-[结果：]
+###结果:
 ![image](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/normal-result.png)
-[命令：]
+###命令:
 ![image](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/kernelmode-cmd.png)
-[结果：]
+###结果:
 ![image](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/kernelmode-result.png)
 	   	   
 ###２. 出现的问题
