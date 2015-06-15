@@ -173,6 +173,8 @@ int main()
 	   测试输出如下：
 	   	   [命令：]
 	   	   ![result-pi](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/normal-cmd.png)
+	   	   ![screenshots](https://raw.github.com/ButBueatiful/dotvim/master/screenshots/vim-screenshot.jpg)
+![screenshots](https://raw.github.com/ButBueatiful/dotvim/master/screenshots/vim-screenshot.jpg)
 	   	   [结果：]
 	   	   ![image](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/normal-result.png)
 	   	   [命令：]
