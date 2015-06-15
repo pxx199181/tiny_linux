@@ -106,6 +106,21 @@ ip route add default via 10.0.2.2
 		  　说明编译成功。
 		          ２)．利用time查看程序运行时间，发现在其他目录下既有内核态时间也有用户态时间，但是在trusted中却只有内核态时间，
 		  　说明编译成功。
+
+测试代码如下：
+```
+#include<stdio.h>
+int main(int argc, char*argv[])
+{
+	__asm__ __volatile__("cli");
+	int i;
+	for (i = 0; i < 100000; i++);
+	{
+		printf("%d\n", i);
+	}
+	return 0;
+}
+```
 		  
 ###２. 编译glibc
 		1>．成功编译这部分耗时比较长，主要是前面出现了好多问题，gcc的版本，gawk的版本等等之类的，最后成功编译成功是因为找了个
@@ -122,7 +137,7 @@ ip route add default via 10.0.2.2
 		3>．测试方法：分别在trusted目录外面和在trusted目录里面进程测试，发现耗时相差无几，而且大部分时间是在trusted外面的时间甚至。
 		  比里面的耗时更少，与原来的结论相矛盾，测试时候，我将所有的so文件和程序同时放在trusted里面或者外面，连接的时候也是手动指定
 		  出现这个结果还是比较差异的。
-	   代码如下：
+代码如下：
 ```
 #include<stdio.h>
 #include<unistd.h>
@@ -170,15 +185,15 @@ int main()
 	return 0;
 }
 ```
-	   测试输出如下：
-	   	   [命令：]
-	   	   ![image](https://github.com/pxx199181/tiny_linux/raw/master/result-pic/normal-cmd.png)
-	   	   [结果：]
-	   	   ![image](https://github.com/pxx199181/tiny_linux/raw/master/result-pic/normal-result.png)
-	   	   [命令：]
-	   	   ![image](https://github.com/pxx199181/tiny_linux/raw/master/result-pic/kernelmode-cmd.png)
-	   	   [结果：]
-	   	   ![image](https://github.com/pxx199181/tiny_linux/raw/master/result-pic/kernelmode-result.png)
+测试输出如下：
+#####  命令:
+![image](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/normal-cmd.png)
+#####  结果:
+![image](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/normal-result.png)
+#####  命令:
+![image](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/kernelmode-cmd.png)
+#####  结果:
+![image](https://raw.github.com/pxx199181/tiny_linux/master/result-pic/kernelmode-result.png)
 	   	   
 ###２. 出现的问题
             1). glibc的编译必须的找个和2.11非常接近的系统，否则gcc和gawk存在很多问题，哪怕解决了可能还存在一些奇奇怪怪
@@ -194,3 +209,4 @@ int main()
 		 要弄的更清楚，得去深入了解那个patch的真正所做的事情了。
 
 		
+
